@@ -127,3 +127,25 @@ test('digits leave the game and cancel the loop; Esc goes home from it', async (
   expect(visible()).toEqual(['view-welcome']);
   expect(pending.size).toBe(0);
 });
+
+test('touch buttons: START toggles the loop, holding FIRE shoots', async () => {
+  $('btn-click').click();
+  await settle();
+  await press('5');
+  expect(location.hash).toBe('#game');
+  const tap = (sel: string, type: string) =>
+    document.querySelector(sel)!.dispatchEvent(new PointerEvent(type, { bubbles: true }));
+  const score = Number($('game-score').textContent);
+  expect(pending.size).toBe(0);
+  tap('[data-tap="start"]', 'pointerdown');
+  expect(pending.size).toBe(1);
+  tap('[data-tap="start"]', 'pointerdown');
+  expect(pending.size).toBe(0);
+  tap('[data-tap="start"]', 'pointerdown');
+  vi.spyOn(Math, 'random').mockReturnValue(0.99);
+  tap('[data-hold="fire"]', 'pointerdown');
+  for (let t = 16; t < 5000 && Number($('game-score').textContent) === score; t += 16) nextFrame(t);
+  tap('[data-hold="fire"]', 'pointerup');
+  vi.mocked(Math.random).mockRestore();
+  expect(Number($('game-score').textContent)).toBeGreaterThan(score);
+});
