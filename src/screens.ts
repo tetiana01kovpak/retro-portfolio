@@ -109,7 +109,7 @@ const gameView = () => `
   <div class="game">
     <p class="cmd">C:\\&gt; RUN INVADERS.EXE</p>
     <p class="game-hud"><span>SCORE <b id="game-score"></b></span><span>LIVES <b id="game-lives"></b></span><span>HI-SCORE <b id="game-hi"></b></span></p>
-    <canvas class="game-canvas" width="${W * SCALE}" height="${H * SCALE}" role="img" aria-label="Invaders playfield"></canvas>
+    <div class="game-stage"><canvas class="game-canvas" width="${W * SCALE}" height="${H * SCALE}" role="img" aria-label="Invaders playfield"></canvas></div>
     <p class="game-keys"><kbd>←</kbd><kbd>→</kbd>/<kbd>A</kbd><kbd>D</kbd> move &nbsp;<kbd>SPACE</kbd> fire &nbsp;<kbd>ENTER</kbd> start &nbsp;<kbd>P</kbd> pause</p>
     <div class="game-touch">
       <button class="btn" type="button" data-hold="left" aria-label="Move left">◀</button>
