@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Tetiana Kovpak — retro portfolio
 
 A 1970s CRT computer that boots up and shows the portfolio on its screen. Vite + vanilla TypeScript, no framework.
@@ -10,8 +9,12 @@ npm ci
 npm run dev        # http://localhost:5173
 ```
 
-Deep links skip the boot animation: `#welcome`, `#about`, `#projects`, `#experience`, `#contact`.
-Keys: `1`–`4` or `←`/`→` switch screens, `Esc` goes home, any key skips the boot. The power button on the case reboots.
+Deep links skip the boot animation: `#welcome`, `#about`, `#projects`, `#experience`, `#contact`, `#game`.
+Keys: `1`–`5` or `←`/`→` switch screens, `Esc` goes home, any key skips the boot. The power button on the case reboots.
+
+The Game screen is a small invaders game: `←`/`→` or `A`/`D` move, `Space` fires, `Enter` starts, `P` pauses
+(on-screen buttons on touch devices). The arrow keys play instead of switching screens there; the high score
+is kept in `localStorage`.
 
 ## Build and check
 
@@ -50,6 +53,3 @@ No environment variables are needed.
 All text lives in [`src/content.ts`](src/content.ts): profile, bio, languages, skills, projects, experience,
 education, certificates and contact links. Add certificates to the `certificates` array; they appear on the
 Experience screen under "Education & certificates". Leave `dates` out where a date is unknown.
-=======
-# portfolio-test
->>>>>>> a6795a2 (Create README.md)
