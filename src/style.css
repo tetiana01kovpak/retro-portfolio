@@ -167,11 +167,11 @@ body {
   height: 100%;
   border-radius: 7% / 9%;
   overflow: hidden;
-  background: #fff;
+  background: radial-gradient(ellipse at 50% 45%, #0d1a10 0%, #060b07 70%, #020402 100%);
   box-shadow:
     0 0 0 clamp(3px, 0.5vw, 6px) #1a1611,
     0 0 0 clamp(4px, 0.65vw, 8px) #5c4f38,
-    inset 0 0 40px rgba(0, 0, 0, 0.08);
+    inset 0 0 40px rgba(0, 0, 0, 0.9);
 }
 
 .glass {
@@ -181,8 +181,8 @@ body {
   border-radius: inherit;
   background:
     radial-gradient(ellipse 60% 40% at 28% 12%, rgba(255, 255, 255, 0.09), transparent 70%),
-    radial-gradient(ellipse at 50% 50%, transparent 58%, rgba(0, 0, 0, 0.05) 100%);
-  box-shadow: inset 0 0 70px 14px rgba(0, 0, 0, 0.06), inset 0 0 12px rgba(0, 0, 0, 0.1);
+    radial-gradient(ellipse at 50% 50%, transparent 58%, rgba(0, 0, 0, 0.55) 100%);
+  box-shadow: inset 0 0 70px 14px rgba(0, 0, 0, 0.75), inset 0 0 12px rgba(0, 0, 0, 0.8);
 }
 
 .case-bottom {
@@ -302,7 +302,7 @@ body {
 
 .crt::before {
   background:
-    repeating-linear-gradient(180deg, rgba(0, 0, 0, 0.04) 0 1px, transparent 1px 3px),
+    repeating-linear-gradient(180deg, rgba(0, 0, 0, 0.32) 0 1px, transparent 1px 3px),
     repeating-linear-gradient(90deg, rgba(255, 0, 60, 0.025) 0 1px, rgba(0, 255, 90, 0.02) 1px 2px, rgba(0, 80, 255, 0.025) 2px 3px);
 }
 
@@ -702,7 +702,7 @@ kbd {
   left: 0.6em;
   margin: 0 !important;
   padding: 0 0.3em;
-  background: #fff;
+  background: #07110a;
   color: var(--amber);
   text-shadow: 0 0 8px rgba(255, 179, 71, 0.6);
 }
@@ -981,7 +981,6 @@ kbd {
   min-height: 0;
   width: 100%;
   object-fit: contain;
-  background: #fff;
 }
 .game-keys {
   font-size: 0.72em;
