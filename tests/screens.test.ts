@@ -1,4 +1,4 @@
-import { test } from 'node:test';
+import { test } from 'vitest';
 import assert from 'node:assert/strict';
 import { contact, projects } from '../src/content.ts';
 import { mailto, render, screens } from '../src/screens.ts';
