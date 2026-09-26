@@ -2,9 +2,9 @@ import { ALIEN_H, H, SHIP_H, SHIP_Y, SHOT_H, W, createGame, start, step, toggleP
 
 export const SCALE = 3;
 const HI_KEY = 'tk-invaders-hi';
-const PHOSPHOR = '#f7f9fa';
-const HI = '#ffffff';
-const AMBER = '#d1d9dc';
+const PHOSPHOR = '#4dff88';
+const HI = '#b6ffcf';
+const AMBER = '#ffb347';
 
 const sprites = [
   ['.....##.....', '....####....', '...######...', '..##.##.##..', '..########..', '....#..#....', '...#.##.#...', '..#.#..#.#..'],
