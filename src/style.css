@@ -167,11 +167,11 @@ body {
   height: 100%;
   border-radius: 7% / 9%;
   overflow: hidden;
-  background: radial-gradient(ellipse at 50% 45%, #0d1a10 0%, #060b07 70%, #020402 100%);
+  background: radial-gradient(ellipse at 50% 45%, #fff 0%, #f3f4f2 72%, #dfe2e0 100%);
   box-shadow:
     0 0 0 clamp(3px, 0.5vw, 6px) #1a1611,
     0 0 0 clamp(4px, 0.65vw, 8px) #7d838a,
-    inset 0 0 40px rgba(0, 0, 0, 0.9);
+    inset 0 0 40px rgba(0, 0, 0, 0.18);
 }
 
 .glass {
@@ -180,9 +180,9 @@ body {
   pointer-events: none;
   border-radius: inherit;
   background:
-    radial-gradient(ellipse 60% 40% at 28% 12%, rgba(255, 255, 255, 0.09), transparent 70%),
-    radial-gradient(ellipse at 50% 50%, transparent 58%, rgba(0, 0, 0, 0.55) 100%);
-  box-shadow: inset 0 0 70px 14px rgba(0, 0, 0, 0.75), inset 0 0 12px rgba(0, 0, 0, 0.8);
+    radial-gradient(ellipse 60% 40% at 28% 12%, rgba(255, 255, 255, 0.35), transparent 70%),
+    radial-gradient(ellipse at 50% 50%, transparent 70%, rgba(0, 0, 0, 0.12) 100%);
+  box-shadow: inset 0 0 45px 8px rgba(0, 0, 0, 0.12), inset 0 0 12px rgba(0, 0, 0, 0.12);
 }
 
 .case-bottom {
@@ -272,8 +272,17 @@ body {
 /* ---------- CRT ---------- */
 
 .crt {
+  --phosphor: #f7f9fa;
+  --phosphor-hi: #fff;
+  --phosphor-dim: #d1d9dc;
+  --phosphor-faint: rgba(255, 255, 255, 0.08);
+  --amber: #f7f9fa;
+  --terminal: #111a1e;
+  --terminal-active: #354950;
+  --glow: 0 0 4px rgba(255, 255, 255, 0.22);
   position: absolute;
   inset: 0;
+  color: var(--phosphor);
   font-size: clamp(17px, 1.75vw, 23px);
   line-height: 1.25;
   text-shadow: var(--glow);
@@ -302,12 +311,12 @@ body {
 
 .crt::before {
   background:
-    repeating-linear-gradient(180deg, rgba(0, 0, 0, 0.32) 0 1px, transparent 1px 3px),
-    repeating-linear-gradient(90deg, rgba(255, 0, 60, 0.025) 0 1px, rgba(0, 255, 90, 0.02) 1px 2px, rgba(0, 80, 255, 0.025) 2px 3px);
+    repeating-linear-gradient(180deg, rgba(0, 0, 0, 0.08) 0 1px, transparent 1px 3px),
+    repeating-linear-gradient(90deg, rgba(255, 0, 60, 0.015) 0 1px, rgba(0, 80, 255, 0.015) 1px 2px);
 }
 
 .crt::after {
-  background: linear-gradient(180deg, transparent 0%, rgba(77, 255, 136, 0.06) 50%, transparent 100%);
+  background: linear-gradient(180deg, transparent 0%, rgba(255, 255, 255, 0.05) 50%, transparent 100%);
   height: 22%;
   animation: roll 7s linear infinite;
 }
@@ -326,7 +335,7 @@ body {
   }
   55% {
     transform: scale(1, 1.02);
-    background-color: rgba(120, 255, 170, 0.35);
+    background-color: rgba(255, 255, 255, 0.35);
     filter: brightness(2);
   }
   100% {
@@ -363,14 +372,16 @@ body {
 }
 
 ::selection {
-  background: var(--phosphor);
-  color: #041008;
+  background: #354950;
+  color: #fff;
   text-shadow: none;
 }
 
 /* ---------- boot ---------- */
 
 .view--boot {
+  inset: clamp(8px, 1.4vw, 18px);
+  background: var(--terminal);
   cursor: pointer;
   display: flex;
   flex-direction: column;
@@ -443,6 +454,9 @@ body {
 }
 
 .welcome {
+  max-width: 100%;
+  padding: 1.2em;
+  background: var(--terminal);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -460,7 +474,7 @@ body {
   font-size: clamp(34px, 6.4vw, 84px);
   line-height: 1;
   color: var(--phosphor-hi);
-  text-shadow: 0 0 3px #fff, 0 0 12px var(--phosphor), 0 0 34px var(--phosphor), 0 0 70px rgba(77, 255, 136, 0.4);
+  text-shadow: 0 0 12px rgba(255, 255, 255, 0.3);
   min-height: 1em;
 }
 
@@ -478,21 +492,21 @@ body {
 .btn {
   font: inherit;
   color: var(--phosphor);
-  background: transparent;
+  background: var(--terminal);
   border: 2px solid var(--phosphor);
   padding: 0.2em 1.2em;
   cursor: pointer;
   text-shadow: var(--glow);
-  box-shadow: 0 0 10px rgba(77, 255, 136, 0.35), inset 0 0 10px rgba(77, 255, 136, 0.2);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
   transition: background 0.12s, color 0.12s;
 }
 .btn:hover,
 .btn:focus-visible {
-  background: var(--phosphor);
-  color: #041008;
+  background: var(--terminal-active);
+  color: #fff;
   text-shadow: none;
   outline: none;
-  box-shadow: 0 0 18px var(--phosphor), 0 0 40px rgba(77, 255, 136, 0.4);
+  box-shadow: 0 0 0 2px #fff;
 }
 
 .btn--click {
@@ -518,7 +532,7 @@ body {
 }
 
 @keyframes pulse {
-  50% { box-shadow: 0 0 22px rgba(77, 255, 136, 0.7), inset 0 0 14px rgba(77, 255, 136, 0.35); }
+  50% { box-shadow: 0 0 16px rgba(255, 255, 255, 0.5); }
 }
 
 .hint {
@@ -539,10 +553,10 @@ body {
   display: flex;
   gap: 1em;
   justify-content: space-between;
-  background: var(--phosphor);
-  color: #041008;
+  background: var(--terminal);
+  color: #fff;
   text-shadow: none;
-  box-shadow: 0 0 14px rgba(77, 255, 136, 0.55);
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.18);
   padding: 0 0.6em;
   white-space: nowrap;
 }
@@ -560,6 +574,7 @@ body {
 }
 .menu a {
   color: var(--phosphor);
+  background: var(--terminal);
   text-decoration: none;
   padding: 0 0.45em;
   display: inline-flex;
@@ -569,11 +584,11 @@ body {
 .menu a:hover,
 .menu a:focus-visible,
 .menu a[aria-current='page'] {
-  background: var(--phosphor);
-  color: #041008;
+  background: var(--terminal-active);
+  color: #fff;
   text-shadow: none;
   outline: none;
-  box-shadow: 0 0 12px rgba(77, 255, 136, 0.6);
+  box-shadow: 0 0 0 1px #fff;
 }
 .menu a[aria-current='page']::before {
   content: '▶';
@@ -594,12 +609,12 @@ kbd {
   min-height: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
-  padding-right: 0.6em;
+  padding: 0.4em 0.6em 1.2em;
+  background: var(--terminal);
   scrollbar-width: thin;
   scrollbar-color: var(--phosphor-dim) transparent;
   outline: none;
   mask-image: linear-gradient(180deg, #000 calc(100% - 1.6em), transparent);
-  padding-bottom: 1.2em;
 }
 .pane::-webkit-scrollbar { width: 10px; }
 .pane::-webkit-scrollbar-thumb { background: var(--phosphor-dim); }
@@ -629,6 +644,7 @@ kbd {
   gap: 1em;
   font-size: 0.72em;
   color: var(--phosphor-dim);
+  background: var(--terminal);
   border-top: 2px dashed var(--phosphor-dim);
   padding-top: 0.3em;
 }
@@ -652,12 +668,12 @@ kbd {
   color: var(--phosphor-hi);
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  text-shadow: 0 0 3px #fff, 0 0 12px var(--phosphor), 0 0 30px var(--phosphor);
+  text-shadow: 0 0 12px rgba(255, 255, 255, 0.3);
 }
 
 .role {
   color: var(--amber);
-  text-shadow: 0 0 2px #ffe2b5, 0 0 10px rgba(255, 179, 71, 0.6);
+  text-shadow: var(--glow);
   font-size: 1.15em;
 }
 
@@ -673,7 +689,7 @@ kbd {
   align-items: center;
   gap: 0.6em;
   color: var(--amber);
-  text-shadow: 0 0 2px #ffe2b5, 0 0 10px rgba(255, 179, 71, 0.6);
+  text-shadow: var(--glow);
 }
 .sub::after {
   content: '';
@@ -694,7 +710,7 @@ kbd {
   border: 2px solid var(--phosphor-dim);
   padding: 0.5em 0.8em 0.4em;
   position: relative;
-  box-shadow: inset 0 0 18px rgba(77, 255, 136, 0.08);
+  box-shadow: inset 0 0 18px rgba(255, 255, 255, 0.08);
 }
 .box-title {
   position: absolute;
@@ -702,9 +718,9 @@ kbd {
   left: 0.6em;
   margin: 0 !important;
   padding: 0 0.3em;
-  background: #07110a;
+  background: var(--terminal);
   color: var(--amber);
-  text-shadow: 0 0 8px rgba(255, 179, 71, 0.6);
+  text-shadow: var(--glow);
 }
 
 .langs {
@@ -781,13 +797,13 @@ kbd {
 .project {
   border: 2px solid var(--phosphor-dim);
   padding: 0.5em 0.8em 0.3em;
-  box-shadow: inset 0 0 18px rgba(77, 255, 136, 0.08);
+  box-shadow: inset 0 0 18px rgba(255, 255, 255, 0.08);
   transition: border-color 0.15s, box-shadow 0.15s;
 }
 .project:hover,
 .project:focus-within {
   border-color: var(--phosphor);
-  box-shadow: inset 0 0 22px rgba(77, 255, 136, 0.18), 0 0 14px rgba(77, 255, 136, 0.3);
+  box-shadow: inset 0 0 22px rgba(255, 255, 255, 0.12), 0 0 14px rgba(255, 255, 255, 0.2);
 }
 .project-head {
   display: flex;
@@ -796,8 +812,8 @@ kbd {
   margin-bottom: 0.3em !important;
 }
 .project-no {
-  background: var(--phosphor);
-  color: #041008;
+  background: var(--terminal-active);
+  color: #fff;
   text-shadow: none;
   padding: 0 0.25em;
 }
@@ -813,7 +829,7 @@ kbd {
 }
 .project-hl {
   color: var(--amber);
-  text-shadow: 0 0 8px rgba(255, 179, 71, 0.5);
+  text-shadow: var(--glow);
   font-size: 0.9em;
 }
 .project-links {
@@ -830,8 +846,8 @@ kbd {
 }
 .link:hover,
 .link:focus-visible {
-  background: var(--phosphor);
-  color: #041008;
+  background: var(--terminal-active);
+  color: #fff;
   text-shadow: none;
   outline: none;
   border-bottom-color: transparent;
@@ -927,7 +943,7 @@ kbd {
   font: inherit;
   color: var(--phosphor);
   text-shadow: var(--glow);
-  background: rgba(77, 255, 136, 0.05);
+  background: #25343a;
   border: 0;
   border-bottom: 2px solid var(--phosphor-dim);
   padding: 0.1em 0.3em;
@@ -938,13 +954,13 @@ kbd {
 .form input::placeholder,
 .form textarea::placeholder {
   color: var(--phosphor-dim);
-  opacity: 0.6;
+  opacity: 1;
 }
 .form input:focus,
 .form textarea:focus {
   outline: none;
   border-bottom-color: var(--phosphor);
-  background: rgba(77, 255, 136, 0.1);
+  background: var(--terminal-active);
 }
 .form-status {
   margin: 0 !important;
@@ -985,6 +1001,7 @@ kbd {
 }
 .game-canvas {
   display: block;
+  background: #0c1418;
   width: min(100cqw, 87.5cqh);
   height: auto;
   aspect-ratio: 7 / 8;
