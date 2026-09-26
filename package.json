@@ -1,0 +1,20 @@
+{
+  "name": "tetiana-kovpak-portfolio",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "node --test tests/",
+    "check": "npm run build && npm test"
+  },
+  "dependencies": {
+    "@fontsource/vt323": "^5.3.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "vite": "^8.3.1"
+  }
+}
