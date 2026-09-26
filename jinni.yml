@@ -1,0 +1,26 @@
+start: docker compose up -d --build
+start_on_create: true
+health: /health
+ports:
+  web: 8080
+prepare: npm ci
+check: npm run check
+features:
+  - name: content
+    summary: Every piece of portfolio text, project, role and certificate
+    paths: [src/content.ts]
+    cli: [test]
+  - name: screens
+    summary: HTML for the About, Projects, Experience and Contact screens, mailto form link
+    paths: [src/screens.ts]
+    cli: [test]
+  - name: computer
+    summary: CRT computer shell, boot sequence, welcome typewriter, keyboard navigation
+    paths: [index.html, src/main.ts, src/style.css]
+    cli: [build]
+  - name: serving
+    summary: nginx image serving the build, /health endpoint, compose stack
+    paths: [Dockerfile, nginx.conf, compose.yaml]
+cli:
+  build: npm run build
+  test: npm test
