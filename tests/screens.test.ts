@@ -4,8 +4,15 @@ import { contact, projects } from '../src/content.ts';
 import { mailto, render, screens } from '../src/screens.ts';
 
 test('every screen renders', () => {
-  assert.deepEqual(screens, ['about', 'projects', 'experience', 'contact']);
+  assert.deepEqual(screens, ['about', 'projects', 'experience', 'contact', 'game']);
   for (const s of screens) assert.ok(render[s]().length > 200, s);
+});
+
+test('game screen has a canvas, HUD and touch controls', () => {
+  const html = render.game();
+  assert.ok(html.includes('<canvas'));
+  for (const id of ['game-score', 'game-lives', 'game-hi']) assert.ok(html.includes(`id="${id}"`), id);
+  for (const k of ['left', 'right', 'fire']) assert.ok(html.includes(`data-hold="${k}"`), k);
 });
 
 test('projects screen lists every project with its links', () => {

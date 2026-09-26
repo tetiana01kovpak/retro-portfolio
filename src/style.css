@@ -952,6 +952,62 @@ kbd {
   color: var(--amber);
 }
 
+/* ---------- game ---------- */
+
+.pane[aria-label='game'] {
+  mask-image: none;
+  padding-bottom: 0;
+}
+.game {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3em;
+}
+.game p {
+  margin: 0;
+}
+.game-hud {
+  display: flex;
+  justify-content: space-between;
+  gap: 1em;
+}
+.game-hud b {
+  font-weight: normal;
+  color: var(--phosphor-hi);
+}
+.game-canvas {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  object-fit: contain;
+}
+.game-keys {
+  font-size: 0.72em;
+  color: var(--phosphor-dim);
+  text-align: center;
+}
+.game-touch {
+  display: none;
+  gap: 0.4em;
+}
+.game-touch .btn {
+  flex: 1;
+  padding: 0.3em 0;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+@media (pointer: coarse) {
+  .game-keys {
+    display: none;
+  }
+  .game-touch {
+    display: flex;
+  }
+}
+
 /* ---------- small screens ---------- */
 
 @media (max-width: 720px), (max-height: 520px) and (orientation: landscape) {

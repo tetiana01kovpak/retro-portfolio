@@ -1,6 +1,8 @@
+import { H, W } from './game.ts';
+import { SCALE } from './gameview.ts';
 import { certificates, contact, education, experience, profile, projects, skills, type Role } from './content.ts';
 
-export const screens = ['about', 'projects', 'experience', 'contact'] as const;
+export const screens = ['about', 'projects', 'experience', 'contact', 'game'] as const;
 export type Screen = (typeof screens)[number];
 
 const esc = (s: string) =>
@@ -103,11 +105,26 @@ const contactView = () => `
     <button class="btn" type="submit">[ Send ]</button>
   </form>`;
 
+const gameView = () => `
+  <div class="game">
+    <p class="cmd">C:\\&gt; RUN INVADERS.EXE</p>
+    <p class="game-hud"><span>SCORE <b id="game-score"></b></span><span>LIVES <b id="game-lives"></b></span><span>HI-SCORE <b id="game-hi"></b></span></p>
+    <canvas class="game-canvas" width="${W * SCALE}" height="${H * SCALE}" role="img" aria-label="Invaders playfield"></canvas>
+    <p class="game-keys"><kbd>←</kbd><kbd>→</kbd>/<kbd>A</kbd><kbd>D</kbd> move &nbsp;<kbd>SPACE</kbd> fire &nbsp;<kbd>ENTER</kbd> start &nbsp;<kbd>P</kbd> pause</p>
+    <div class="game-touch">
+      <button class="btn" type="button" data-hold="left" aria-label="Move left">◀</button>
+      <button class="btn" type="button" data-hold="fire">FIRE</button>
+      <button class="btn" type="button" data-hold="right" aria-label="Move right">▶</button>
+      <button class="btn" type="button" data-tap="start">START</button>
+    </div>
+  </div>`;
+
 export const render: Record<Screen, () => string> = {
   about,
   projects: projectsView,
   experience: experienceView,
   contact: contactView,
+  game: gameView,
 };
 
 export function mailto(name: string, subject: string, message: string) {

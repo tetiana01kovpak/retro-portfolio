@@ -1,6 +1,7 @@
 import '@fontsource/vt323/latin-400.css';
 import './style.css';
 import { profile } from './content.ts';
+import { mountGame, unmountGame } from './gameview.ts';
 import { mailto, render, screens, type Screen } from './screens.ts';
 
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
@@ -61,6 +62,7 @@ const bootLines: [string, number][] = [
 ];
 
 function show(view: 'boot' | 'welcome' | 'shell') {
+  unmountGame();
   bootView.hidden = view !== 'boot';
   welcomeView.hidden = view !== 'welcome';
   shell.hidden = view !== 'shell';
@@ -167,6 +169,7 @@ function open(screen: Screen) {
   }
   blinkDisk();
   if (screen === 'contact') bindForm();
+  if (screen === 'game') mountGame(pane, reduced);
 }
 
 function bindForm() {
@@ -225,13 +228,14 @@ addEventListener('keydown', (e) => {
   const n = Number(e.key);
   if (n >= 1 && n <= screens.length) go(screens[n - 1]);
   const step = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
-  if (step) go(screens[(screens.indexOf(current) + step + screens.length) % screens.length]);
+  if (step && current !== 'game') go(screens[(screens.indexOf(current) + step + screens.length) % screens.length]);
 });
 
 bootView.addEventListener('click', () => go('welcome'));
 clickBtn.addEventListener('click', () => go('about'));
 $('power').addEventListener('click', () => {
   history.replaceState(null, '', location.pathname + location.search);
+  unmountGame();
   computer.dataset.state = 'off';
   crt.classList.remove('on');
   current = 'boot';
