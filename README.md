@@ -16,7 +16,7 @@ Keys: `1`–`4` or `←`/`→` switch screens, `Esc` goes home, any key skips th
 
 ```sh
 npm run build      # type-check + production build into dist/
-npm run check      # build + tests (node --test, needs Node 23.6+)
+npm run check      # build + tests (vitest)
 ```
 
 ## Serve with Docker

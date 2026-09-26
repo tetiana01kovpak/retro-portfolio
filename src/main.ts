@@ -68,6 +68,7 @@ function show(view: 'boot' | 'welcome' | 'shell') {
 
 function blinkDisk() {
   computer.classList.remove('disk');
+  if (reduced.matches) return;
   void computer.offsetWidth;
   computer.classList.add('disk');
 }
@@ -152,7 +153,11 @@ function open(screen: Screen) {
   pane.scrollTop = 0;
   pane.classList.remove('enter');
   void pane.offsetWidth;
-  if (!initial) pane.classList.add('enter');
+  pane.setAttribute('aria-label', screen);
+  if (!initial) {
+    pane.classList.add('enter');
+    pane.focus({ preventScroll: true });
+  }
   initial = false;
   path.textContent = `C:\\${screen.toUpperCase()}`;
   document.title = `${screen[0].toUpperCase()}${screen.slice(1)} — ${profile.name}`;
@@ -180,6 +185,11 @@ function bindForm() {
     status.textContent = 'OPENING YOUR MAIL PROGRAM...';
     location.href = mailto(name, String(data.get('subject') ?? '').trim(), message);
   });
+}
+
+function bootAfter(ms: number) {
+  const id = ++run;
+  setTimeout(() => id === run && boot(), reduced.matches ? 0 : ms);
 }
 
 function route() {
@@ -224,9 +234,8 @@ $('power').addEventListener('click', () => {
   history.replaceState(null, '', location.pathname + location.search);
   computer.dataset.state = 'off';
   crt.classList.remove('on');
-  run++;
   current = 'boot';
-  setTimeout(boot, reduced.matches ? 0 : 500);
+  bootAfter(500);
 });
 
 const tick = () => (clock.textContent = new Date().toTimeString().slice(0, 5));
@@ -238,5 +247,5 @@ if (location.hash) {
   crt.classList.add('instant');
   route();
 } else {
-  setTimeout(boot, reduced.matches ? 0 : 350);
+  bootAfter(350);
 }

@@ -1,4 +1,4 @@
-import { test } from 'node:test';
+import { test } from 'vitest';
 import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
 import { certificates, contact, education, experience, profile, projects, skills } from '../src/content.ts';
@@ -24,7 +24,7 @@ test('every link is absolute https or mailto', () => {
   for (const h of hrefs) assert.match(h, /^(https:\/\/|mailto:)/, h);
 });
 
-test('the build holds the page and its assets', { skip: !existsSync('dist/index.html') }, () => {
+test.skipIf(!existsSync('dist/index.html'))('the build holds the page and its assets (after npm run build)', () => {
   const html = readFileSync('dist/index.html', 'utf8');
   for (const id of ['view-boot', 'view-welcome', 'btn-click', 'pane', 'power']) assert.ok(html.includes(`id="${id}"`), id);
   for (const [, src] of html.matchAll(/(?:src|href)="\/(assets\/[^"]+)"/g)) assert.ok(existsSync(`dist/${src}`), src);
