@@ -25,6 +25,25 @@ npm run check      # build + tests (node --test, needs Node 23.6+)
 docker compose up -d --build   # http://localhost:8080, health at /health
 ```
 
+## Deploy on Render
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/tetiana01kovpak/portfolio-test)
+
+The repository is private, so Render needs access to it first: connect GitHub in Render and grant the
+Render GitHub app access to `tetiana01kovpak/portfolio-test`.
+
+**Blueprint (one click):** Render dashboard > **New** > **Blueprint** > pick the repo. Render reads
+[`render.yaml`](render.yaml) and creates the static site.
+
+**Manual alternative:** Render dashboard > **New** > **Static Site** > pick the repo, then set:
+
+- Build command: `npm ci && npm run build`
+- Publish directory: `dist`
+- Redirects/Rewrites: source `/*`, destination `/index.html`, action **Rewrite**
+- Headers (optional): path `/assets/*`, `Cache-Control: public, max-age=31536000, immutable`
+
+No environment variables are needed.
+
 ## Edit content
 
 All text lives in [`src/content.ts`](src/content.ts): profile, bio, languages, skills, projects, experience,
