@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Tetiana Kovpak — retro portfolio
 
 A 1970s CRT computer that boots up and shows the portfolio on its screen. Vite + vanilla TypeScript, no framework.
@@ -49,3 +50,6 @@ No environment variables are needed.
 All text lives in [`src/content.ts`](src/content.ts): profile, bio, languages, skills, projects, experience,
 education, certificates and contact links. Add certificates to the `certificates` array; they appear on the
 Experience screen under "Education & certificates". Leave `dates` out where a date is unknown.
+=======
+# portfolio-test
+>>>>>>> a6795a2 (Create README.md)
