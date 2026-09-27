@@ -1,36 +1,10 @@
 import * as THREE from 'three';
+import {
+  complete, createHabit, type Habit, isDone, loadHabits, localDate, type PlantType, saveHabits, streak, total,
+} from './garden';
 
-type PlantType = 'flower' | 'tree' | 'cactus' | 'mushroom' | 'crystal';
-type Habit = { id: string; name: string; type: PlantType; dates: string[] };
-const types: PlantType[] = ['flower', 'tree', 'cactus', 'mushroom', 'crystal'];
-const key = 'tk-habit-garden';
 const colors: Record<PlantType, number> = {
   flower: 0xff86ae, tree: 0x79ce8a, cactus: 0x91db67, mushroom: 0xd495ef, crystal: 0x82d5ff,
-};
-const today = () => {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-};
-const streak = (dates: string[]) => {
-  const done = new Set(dates);
-  const day = new Date();
-  if (!done.has(today())) day.setDate(day.getDate() - 1);
-  let count = 0;
-  while (done.has(`${day.getFullYear()}-${String(day.getMonth() + 1).padStart(2, '0')}-${String(day.getDate()).padStart(2, '0')}`)) {
-    count++;
-    day.setDate(day.getDate() - 1);
-  }
-  return count;
-};
-const load = (): Habit[] => {
-  try {
-    const data = JSON.parse(localStorage.getItem(key) || '[]');
-    return Array.isArray(data) ? data.filter((h): h is Habit => typeof h?.id === 'string' && typeof h.name === 'string'
-      && types.includes(h.type) && Array.isArray(h.dates) && h.dates.every((d: unknown) => typeof d === 'string')) : [];
-  } catch { return []; }
-};
-const save = (habits: Habit[]) => {
-  try { localStorage.setItem(key, JSON.stringify(habits)); } catch { /* browser may disable storage */ }
 };
 const material = (color: number) => new THREE.MeshStandardMaterial({ color, flatShading: true, roughness: 0.75 });
 const mesh = (group: THREE.Object3D, geometry: THREE.BufferGeometry, color: number, x: number, y: number, z = 0) => {
@@ -47,7 +21,7 @@ const column = (group: THREE.Group, radius: number, height: number, color: numbe
 function makePlant(habit: Habit): THREE.Group {
   const group = new THREE.Group();
   group.userData.id = habit.id;
-  const n = Math.min(habit.dates.length, 12);
+  const n = Math.min(total(habit), 12);
   const h = 0.32 + n * 0.085;
   const bloom = colors[habit.type] || colors.flower;
   const soil = mesh(group, new THREE.CylinderGeometry(0.37, 0.31, 0.14, 8), 0x756040, 0, 0.02);
@@ -111,7 +85,9 @@ export function mountGame(root: HTMLElement, _reduced: MediaQueryList) {
   const form = root.querySelector<HTMLFormElement>('#garden-form')!;
   const list = root.querySelector<HTMLElement>('#garden-list')!;
   const detail = root.querySelector<HTMLElement>('#garden-detail')!;
-  let habits = load();
+  let habits = loadHabits();
+  let saved = true;
+  const save = () => { saved = saveHabits(habits); };
   let selected = habits[0]?.id || null;
   let renderer: THREE.WebGLRenderer | null = null;
   const scene = new THREE.Scene();
@@ -167,11 +143,12 @@ export function mountGame(root: HTMLElement, _reduced: MediaQueryList) {
       plants.add(plant);
     });
     list.replaceChildren();
+    const today = localDate();
     for (const habit of habits) {
       const button = document.createElement('button');
       button.className = 'garden-item';
       button.type = 'button';
-      button.textContent = `${habit.dates.includes(today()) ? '✓' : '○'} ${habit.name}`;
+      button.textContent = `${isDone(habit, today) ? '✓' : '○'} ${habit.name}`;
       button.setAttribute('aria-pressed', String(selected === habit.id));
       button.addEventListener('click', () => { selected = habit.id; refresh(); });
       list.append(button);
@@ -184,13 +161,17 @@ export function mountGame(root: HTMLElement, _reduced: MediaQueryList) {
       const title = document.createElement('strong');
       title.textContent = habit.name;
       const stats = document.createElement('p');
-      stats.textContent = `${habit.type.toUpperCase()} · Today: ${habit.dates.includes(today()) ? 'done' : 'not yet'} · Streak: ${streak(habit.dates)} · Total: ${habit.dates.length}`;
+      stats.textContent = `${habit.type.toUpperCase()} · Today: ${isDone(habit, today) ? 'done' : 'not yet'} · Streak: ${streak(habit, today)} · Total: ${total(habit)}`;
       const done = document.createElement('button');
       done.className = 'btn';
       done.type = 'button';
-      done.textContent = habit.dates.includes(today()) ? '[ Done today ]' : '[ Mark done ]';
-      done.disabled = habit.dates.includes(today());
-      done.addEventListener('click', () => { habit.dates.push(today()); save(habits); refresh(); });
+      done.textContent = isDone(habit, today) ? '[ Done today ]' : '[ Mark done ]';
+      done.disabled = isDone(habit, today);
+      done.addEventListener('click', () => {
+        habits = habits.map((item) => (item.id === habit.id ? complete(item) : item));
+        save();
+        refresh();
+      });
       const remove = document.createElement('button');
       remove.className = 'btn';
       remove.type = 'button';
@@ -198,23 +179,26 @@ export function mountGame(root: HTMLElement, _reduced: MediaQueryList) {
       remove.addEventListener('click', () => {
         habits = habits.filter((item) => item.id !== habit.id);
         selected = habits[0]?.id || null;
-        save(habits);
+        save();
         refresh();
       });
       detail.append(title, stats, done, remove);
+    }
+    if (!saved) {
+      const warning = document.createElement('p');
+      warning.textContent = 'Storage is unavailable: progress will not survive a reload.';
+      detail.append(warning);
     }
     render3d();
   };
   const submit = (event: SubmitEvent) => {
     event.preventDefault();
     const data = new FormData(form);
-    const name = String(data.get('name') || '').trim();
-    const type = String(data.get('type')) as PlantType;
-    if (!name || !types.includes(type)) return;
-    const habit = { id: crypto.randomUUID(), name, type, dates: [] };
+    const habit = createHabit(String(data.get('name') || ''), String(data.get('type')));
+    if (!habit) return;
     habits.push(habit);
     selected = habit.id;
-    save(habits);
+    save();
     form.reset();
     refresh();
   };

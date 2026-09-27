@@ -87,12 +87,12 @@ test('key 5 opens the garden; plant, mark done, then remove a habit', async () =
   expect($('garden-detail').textContent).toContain('Today: done · Streak: 1 · Total: 1');
   expect(button('Done today').disabled).toBe(true);
   expect($('garden-list').textContent).toContain('✓ Read');
-  const stored = JSON.parse(localStorage.getItem('tk-habit-garden')!);
+  const stored = JSON.parse(localStorage.getItem('tk-habit-garden')!).habits;
   expect(stored.map((h: { name: string }) => h.name)).toEqual(['Old', 'Read']);
   expect(stored[1].dates).toHaveLength(1);
   button('Remove').click();
   expect($('garden-list').children.length).toBe(1);
-  expect(JSON.parse(localStorage.getItem('tk-habit-garden')!).map((h: { name: string }) => h.name)).toEqual(['Old']);
+  expect(JSON.parse(localStorage.getItem('tk-habit-garden')!).habits.map((h: { name: string }) => h.name)).toEqual(['Old']);
 });
 
 test('digits typed in the garden form stay on the garden', async () => {
