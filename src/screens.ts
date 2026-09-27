@@ -1,5 +1,3 @@
-import { H, W } from './game.ts';
-import { SCALE } from './gameview.ts';
 import { certificates, contact, education, experience, profile, projects, skills, type Role } from './content.ts';
 
 export const screens = ['about', 'projects', 'experience', 'contact', 'game'] as const;
@@ -107,15 +105,18 @@ const contactView = () => `
 
 const gameView = () => `
   <div class="game">
-    <p class="cmd">C:\\&gt; RUN INVADERS.EXE</p>
-    <p class="game-hud"><span>SCORE <b id="game-score"></b></span><span>LIVES <b id="game-lives"></b></span><span>HI-SCORE <b id="game-hi"></b></span></p>
-    <div class="game-stage"><canvas class="game-canvas" width="${W * SCALE}" height="${H * SCALE}" role="img" aria-label="Invaders playfield"></canvas></div>
-    <p class="game-keys"><kbd>←</kbd><kbd>→</kbd>/<kbd>A</kbd><kbd>D</kbd> move &nbsp;<kbd>SPACE</kbd> fire &nbsp;<kbd>ENTER</kbd> start &nbsp;<kbd>P</kbd> pause</p>
-    <div class="game-touch">
-      <button class="btn" type="button" data-hold="left" aria-label="Move left">◀</button>
-      <button class="btn" type="button" data-hold="fire">FIRE</button>
-      <button class="btn" type="button" data-hold="right" aria-label="Move right">▶</button>
-      <button class="btn" type="button" data-tap="start">START</button>
+    <p class="cmd">C:\\&gt; RUN GARDEN.EXE</p>
+    <h2 class="game-title">Habit Garden</h2>
+    <p class="game-keys">Plant a habit. Mark it done each day to help it grow. Select a plant to see its progress.</p>
+    <div class="game-stage" id="garden-stage" aria-label="3D habit garden"></div>
+    <form class="garden-form" id="garden-form">
+      <label>NEW HABIT <input id="garden-name" name="name" maxlength="40" required placeholder="e.g. Read for 10 minutes" /></label>
+      <label>PLANT <select name="type"><option value="flower">Flower</option><option value="tree">Tree</option><option value="cactus">Cactus</option><option value="mushroom">Mushroom</option><option value="crystal">Crystal</option></select></label>
+      <button class="btn" type="submit">[ Plant ]</button>
+    </form>
+    <div class="garden-bottom">
+      <div class="garden-list" id="garden-list" aria-label="Your habits"></div>
+      <div class="garden-detail" id="garden-detail" aria-live="polite"></div>
     </div>
   </div>`;
 

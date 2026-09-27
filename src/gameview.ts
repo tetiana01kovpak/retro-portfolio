@@ -1,174 +1,243 @@
-import { ALIEN_H, H, SHIP_H, SHIP_Y, SHOT_H, W, createGame, start, step, togglePause, type Game, type Input } from './game.ts';
+import * as THREE from 'three';
 
-export const SCALE = 3;
-const HI_KEY = 'tk-invaders-hi';
-const PHOSPHOR = '#4dff88';
-const HI = '#b6ffcf';
-const AMBER = '#ffb347';
-
-const sprites = [
-  ['.....##.....', '....####....', '...######...', '..##.##.##..', '..########..', '....#..#....', '...#.##.#...', '..#.#..#.#..'],
-  ['..#.....#...', '...#...#....', '..#######...', '.##.###.##..', '###########.', '#.#######.#.', '#.#.....#.#.', '...##.##....'],
-  ['....####....', '.##########.', '############', '###..##..###', '############', '...##..##...', '..##.##.##..', '##........##'],
-];
-const shipSprite = ['......#......', '.....###.....', '.....###.....', '.###########.', '#############', '#############', '#############', '#############'];
-const boomSprite = ['#...#..#...#', '.#...##...#.', '..#......#..', '##........##', '..#......#..', '.#...##...#.', '#...#..#...#', '............'];
-
-const loadHi = () => {
-  try {
-    return Number(localStorage.getItem(HI_KEY)) || 0;
-  } catch {
-    return 0;
+type PlantType = 'flower' | 'tree' | 'cactus' | 'mushroom' | 'crystal';
+type Habit = { id: string; name: string; type: PlantType; dates: string[] };
+const types: PlantType[] = ['flower', 'tree', 'cactus', 'mushroom', 'crystal'];
+const key = 'tk-habit-garden';
+const colors: Record<PlantType, number> = {
+  flower: 0xff86ae, tree: 0x79ce8a, cactus: 0x91db67, mushroom: 0xd495ef, crystal: 0x82d5ff,
+};
+const today = () => {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+};
+const streak = (dates: string[]) => {
+  const done = new Set(dates);
+  const day = new Date();
+  if (!done.has(today())) day.setDate(day.getDate() - 1);
+  let count = 0;
+  while (done.has(`${day.getFullYear()}-${String(day.getMonth() + 1).padStart(2, '0')}-${String(day.getDate()).padStart(2, '0')}`)) {
+    count++;
+    day.setDate(day.getDate() - 1);
   }
+  return count;
 };
-
-const saveHi = (n: number) => {
+const load = (): Habit[] => {
   try {
-    localStorage.setItem(HI_KEY, String(n));
-  } catch {}
+    const data = JSON.parse(localStorage.getItem(key) || '[]');
+    return Array.isArray(data) ? data : [];
+  } catch { return []; }
 };
+const save = (habits: Habit[]) => {
+  try { localStorage.setItem(key, JSON.stringify(habits)); } catch { /* browser may disable storage */ }
+};
+const material = (color: number) => new THREE.MeshStandardMaterial({ color, flatShading: true, roughness: 0.75 });
+const mesh = (group: THREE.Object3D, geometry: THREE.BufferGeometry, color: number, x: number, y: number, z = 0) => {
+  const m = new THREE.Mesh(geometry, material(color));
+  m.position.set(x, y, z);
+  group.add(m);
+  return m;
+};
+const ball = (group: THREE.Group, radius: number, color: number, x: number, y: number, z = 0) =>
+  mesh(group, new THREE.IcosahedronGeometry(radius, 0), color, x, y, z);
+const column = (group: THREE.Group, radius: number, height: number, color: number, x: number, y: number, z = 0) =>
+  mesh(group, new THREE.CylinderGeometry(radius * 0.8, radius, height, 6), color, x, y, z);
 
-let g: Game = createGame();
-let hi = loadHi();
-const input: Input = { left: false, right: false, fire: false };
-let raf = 0;
-let last = 0;
-let boom: { x: number; y: number; t: number } | null = null;
-let unmount: (() => void) | null = null;
-
-export function unmountGame() {
-  unmount?.();
-  unmount = null;
+function makePlant(habit: Habit): THREE.Group {
+  const group = new THREE.Group();
+  group.userData.id = habit.id;
+  const n = Math.min(habit.dates.length, 12);
+  const h = 0.32 + n * 0.085;
+  const bloom = colors[habit.type] || colors.flower;
+  const soil = mesh(group, new THREE.CylinderGeometry(0.37, 0.31, 0.14, 8), 0x756040, 0, 0.02);
+  soil.userData.id = habit.id;
+  mesh(group, new THREE.CylinderGeometry(0.36, 0.36, 0.035, 8), 0x4b783c, 0, 0.105);
+  if (habit.type === 'flower') {
+    column(group, 0.045, h, 0x65b969, 0, h / 2 + 0.1);
+    for (const side of [-1, 1]) {
+      const leaf = ball(group, 0.105 + n * 0.004, 0x82cf75, side * 0.14, h * 0.55 + 0.1);
+      leaf.scale.set(1.4, 0.45, 0.8);
+    }
+    const count = 5 + Math.floor(n / 4);
+    const r = 0.105 + n * 0.009;
+    for (let i = 0; i < count; i++) {
+      const a = (i / count) * Math.PI * 2;
+      const petal = ball(group, r, bloom, Math.cos(a) * r * 1.3, h + 0.13 + Math.sin(a) * r * 1.3, 0.04);
+      petal.scale.z = 0.55;
+    }
+    ball(group, r * 0.85, 0xffdd77, 0, h + 0.13, 0.1);
+  } else if (habit.type === 'tree') {
+    column(group, 0.07 + n * 0.003, h, 0x8f6947, 0, h / 2 + 0.1);
+    const canopy = ball(group, 0.24 + n * 0.018, bloom, 0, h + 0.06);
+    canopy.scale.set(1.25, 0.9, 1.05);
+    if (n >= 3) {
+      ball(group, 0.15 + n * 0.008, 0x4fa96d, -0.2, h - 0.04);
+      ball(group, 0.15 + n * 0.008, 0x9ee19a, 0.2, h - 0.01);
+    }
+  } else if (habit.type === 'cactus') {
+    column(group, 0.11 + n * 0.004, h, bloom, 0, h / 2 + 0.1);
+    ball(group, 0.105 + n * 0.004, bloom, 0, h + 0.1).scale.y = 0.65;
+    for (const side of [-1, 1]) {
+      const arm = column(group, 0.055, h * (0.38 + n * 0.005), bloom, side * 0.19, h * 0.53 + 0.1);
+      arm.rotation.z = side * -0.35;
+    }
+    if (n >= 2) ball(group, 0.08 + n * 0.004, 0xffaa75, 0, h + 0.19);
+  } else if (habit.type === 'mushroom') {
+    column(group, 0.07 + n * 0.003, h, 0xece2c4, 0, h / 2 + 0.1);
+    const cap = mesh(group, new THREE.SphereGeometry(0.22 + n * 0.018, 8, 4, 0, Math.PI * 2, 0, Math.PI / 2), bloom, 0, h + 0.08);
+    cap.scale.y = 0.85;
+    for (const x of [-0.11, 0.08]) ball(group, 0.03 + n * 0.002, 0xffe7f8, x, h + 0.24 + n * 0.01, 0.08);
+  } else {
+    const count = 3 + Math.floor(n / 3);
+    for (let i = 0; i < count; i++) {
+      const angle = (i / count) * Math.PI * 2;
+      const height = h * (i === 0 ? 1.45 : 0.65 + (i % 3) * 0.12);
+      const shard = mesh(group, new THREE.ConeGeometry(0.10 + n * 0.004, height, 5), i % 2 ? 0x6eaacb : bloom,
+        i === 0 ? 0 : Math.cos(angle) * 0.16, height / 2 + 0.1, i === 0 ? 0 : Math.sin(angle) * 0.16);
+      shard.rotation.z = i === 0 ? 0 : Math.cos(angle) * 0.2;
+    }
+  }
+  group.traverse((object) => { object.userData.id = habit.id; });
+  return group;
 }
 
-export function mountGame(root: HTMLElement, reduced: MediaQueryList) {
+let cleanup: (() => void) | null = null;
+export function unmountGame() { cleanup?.(); cleanup = null; }
+
+export function mountGame(root: HTMLElement, _reduced: MediaQueryList) {
   unmountGame();
-  const ctx = root.querySelector('canvas')?.getContext('2d') ?? null;
-  const hud = (id: string) => root.querySelector<HTMLElement>(`#game-${id}`)!;
-  const [score, lives, best] = ['score', 'lives', 'hi'].map(hud);
-
-  const sprite = (rows: string[], ox: number, oy: number) =>
-    rows.forEach((r, y) => [...r].forEach((c, x) => c === '#' && ctx!.rect(ox + x, oy + y, 1, 1)));
-
-  const text = (lines: string[]) => {
-    ctx!.fillStyle = HI;
-    ctx!.textAlign = 'center';
-    ctx!.font = '16px VT323, monospace';
-    lines.forEach((l, i) => ctx!.fillText(l, W / 2, 150 + i * 18));
+  const stage = root.querySelector<HTMLElement>('#garden-stage')!;
+  const form = root.querySelector<HTMLFormElement>('#garden-form')!;
+  const list = root.querySelector<HTMLElement>('#garden-list')!;
+  const detail = root.querySelector<HTMLElement>('#garden-detail')!;
+  let habits = load();
+  let selected = habits[0]?.id || null;
+  let renderer: THREE.WebGLRenderer | null = null;
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x102b20);
+  const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 50);
+  camera.position.set(0, 4.8, 7.6);
+  camera.lookAt(0, 0.2, 0);
+  scene.add(new THREE.HemisphereLight(0xcaffd7, 0x254125, 2.3));
+  const light = new THREE.DirectionalLight(0xffe5b0, 2.4);
+  light.position.set(-3, 6, 5);
+  scene.add(light);
+  const ground = mesh(scene, new THREE.CylinderGeometry(3.7, 3.85, 0.16, 12), 0x2d5734, 0, -0.12);
+  ground.rotation.y = Math.PI / 12;
+  const plants = new THREE.Group();
+  scene.add(plants);
+  try {
+    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    stage.append(renderer.domElement);
+  } catch {
+    stage.textContent = '3D garden unavailable. Use the habit list below.';
+  }
+  const render3d = () => {
+    if (!renderer) return;
+    const width = stage.clientWidth || 300;
+    const height = stage.clientHeight || 170;
+    renderer.setSize(width, height);
+    camera.aspect = width / height;
+    camera.updateProjectionMatrix();
+    renderer.render(scene, camera);
   };
-
-  const draw = (t = 0) => {
-    score.textContent = String(g.score).padStart(4, '0');
-    lives.textContent = '♥'.repeat(g.lives) || '-';
-    best.textContent = String(hi).padStart(4, '0');
-    if (!ctx) return;
-    ctx.setTransform(SCALE, 0, 0, SCALE, 0, 0);
-    ctx.clearRect(0, 0, W, H);
-    ctx.shadowColor = PHOSPHOR;
-    ctx.shadowBlur = SCALE * (reduced.matches || g.phase !== 'playing' ? 4 : 4 + 1.5 * Math.sin(t / 250));
-    ctx.fillStyle = PHOSPHOR;
-    ctx.beginPath();
-    for (const a of g.aliens) sprite(sprites[Math.ceil(a.row / 2)], Math.round(a.x), Math.round(a.y));
-    sprite(shipSprite, Math.round(g.ship), SHIP_Y);
-    ctx.fill();
-    ctx.fillRect(0, SHIP_Y + SHIP_H + 4, W, 1);
-    ctx.fillStyle = HI;
-    if (g.shot) ctx.fillRect(g.shot.x - 0.5, g.shot.y, 1, SHOT_H);
-    if (boom) {
-      ctx.beginPath();
-      sprite(boomSprite, Math.round(boom.x - 6), Math.round(boom.y - ALIEN_H / 2));
-      ctx.fill();
+  const dispose = (group: THREE.Object3D) => {
+    group.traverse((obj) => {
+      if (obj instanceof THREE.Mesh) {
+        obj.geometry.dispose();
+        const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+        mats.forEach((mat) => mat.dispose());
+      }
+    });
+  };
+  const refresh = () => {
+    while (plants.children.length) {
+      const child = plants.children[0] as THREE.Group;
+      plants.remove(child);
+      dispose(child);
     }
-    ctx.fillStyle = AMBER;
-    ctx.shadowColor = AMBER;
-    for (const b of g.bombs) ctx.fillRect(b.x - 0.5, b.y, 1, SHOT_H);
-    ctx.shadowColor = PHOSPHOR;
-    if (g.phase === 'ready') text(['INVADERS', `WAVE ${g.wave}`, 'PRESS ENTER / START']);
-    else if (g.phase === 'paused') text(['PAUSED', 'P / START TO RESUME']);
-    else if (g.phase === 'over') text(['GAME OVER', `SCORE ${g.score}`, 'PRESS ENTER / START']);
-  };
-
-  const running = () => g.phase === 'playing' && !document.hidden;
-
-  const frame = (t: number) => {
-    const dt = last ? Math.min(t - last, 100) / 1000 : 0;
-    last = t;
-    const prev = g;
-    g = step(g, dt, input, Math.random);
-    if (g.score > prev.score && prev.shot && !reduced.matches) boom = { ...prev.shot, t: 0.2 };
-    else if (boom && (boom.t -= dt) <= 0) boom = null;
-    if (g.score > hi) saveHi((hi = g.score));
-    draw(t);
-    raf = running() ? requestAnimationFrame(frame) : 0;
-  };
-
-  const sync = () => {
-    if (running() && !raf) {
-      last = 0;
-      raf = requestAnimationFrame(frame);
-    } else if (!running() && raf) {
-      cancelAnimationFrame(raf);
-      raf = 0;
+    habits.forEach((habit, i) => {
+      const plant = makePlant(habit);
+      const angle = i * 2.39996;
+      const radius = Math.min(2.7, 0.48 * Math.sqrt(i));
+      plant.position.set(Math.cos(angle) * radius, 0, Math.sin(angle) * radius);
+      if (selected === habit.id) plant.scale.setScalar(1.1);
+      plants.add(plant);
+    });
+    list.replaceChildren();
+    for (const habit of habits) {
+      const button = document.createElement('button');
+      button.className = 'garden-item';
+      button.type = 'button';
+      button.textContent = `${habit.dates.includes(today()) ? '✓' : '○'} ${habit.name}`;
+      button.setAttribute('aria-pressed', String(selected === habit.id));
+      button.addEventListener('click', () => { selected = habit.id; refresh(); });
+      list.append(button);
     }
-    draw();
+    detail.replaceChildren();
+    const habit = habits.find((item) => item.id === selected);
+    if (!habit) {
+      detail.textContent = habits.length ? 'Select a plant to see its progress.' : 'Your garden is empty. Plant your first habit.';
+    } else {
+      const title = document.createElement('strong');
+      title.textContent = habit.name;
+      const stats = document.createElement('p');
+      stats.textContent = `${habit.type.toUpperCase()} · Today: ${habit.dates.includes(today()) ? 'done' : 'not yet'} · Streak: ${streak(habit.dates)} · Total: ${habit.dates.length}`;
+      const done = document.createElement('button');
+      done.className = 'btn';
+      done.type = 'button';
+      done.textContent = habit.dates.includes(today()) ? '[ Done today ]' : '[ Mark done ]';
+      done.disabled = habit.dates.includes(today());
+      done.addEventListener('click', () => { habit.dates.push(today()); save(habits); refresh(); });
+      const remove = document.createElement('button');
+      remove.className = 'btn';
+      remove.type = 'button';
+      remove.textContent = '[ Remove ]';
+      remove.addEventListener('click', () => {
+        habits = habits.filter((item) => item.id !== habit.id);
+        selected = habits[0]?.id || null;
+        save(habits);
+        refresh();
+      });
+      detail.append(title, stats, done, remove);
+    }
+    render3d();
   };
-
-  const hold = (key: string) =>
-    key === 'ArrowLeft' || key === 'a' || key === 'A' ? 'left'
-    : key === 'ArrowRight' || key === 'd' || key === 'D' ? 'right'
-    : key === ' ' ? 'fire'
-    : null;
-
-  const onKey = (e: KeyboardEvent) => {
-    if (e.metaKey || e.ctrlKey || e.altKey) return;
-    const k = hold(e.key);
-    if (k) {
-      e.preventDefault();
-      input[k] = e.type === 'keydown';
-    } else if (e.type === 'keydown' && e.key === 'Enter') g = start(g);
-    else if (e.type === 'keydown' && (e.key === 'p' || e.key === 'P')) g = togglePause(g);
-    else return;
-    sync();
+  const submit = (event: SubmitEvent) => {
+    event.preventDefault();
+    const data = new FormData(form);
+    const name = String(data.get('name') || '').trim();
+    const type = String(data.get('type')) as PlantType;
+    if (!name || !types.includes(type)) return;
+    const habit = { id: crypto.randomUUID(), name, type, dates: [] };
+    habits.push(habit);
+    selected = habit.id;
+    save(habits);
+    form.reset();
+    refresh();
   };
-
-  const release = () => {
-    input.left = input.right = input.fire = false;
+  form.addEventListener('submit', submit);
+  const resize = new ResizeObserver(render3d);
+  resize.observe(stage);
+  const clickPlant = (event: PointerEvent) => {
+    if (!renderer) return;
+    const rect = renderer.domElement.getBoundingClientRect();
+    const pointer = new THREE.Vector2(((event.clientX - rect.left) / rect.width) * 2 - 1, -((event.clientY - rect.top) / rect.height) * 2 + 1);
+    const ray = new THREE.Raycaster();
+    ray.setFromCamera(pointer, camera);
+    const hit = ray.intersectObjects(plants.children, true)[0];
+    const id = hit?.object.userData.id as string | undefined;
+    if (id) { selected = id; refresh(); }
   };
-
-  const onVisibility = () => {
-    release();
-    if (document.hidden && g.phase === 'playing') g = togglePause(g);
-    sync();
-  };
-
-  const touch = root.querySelector<HTMLElement>('.game-touch');
-  const onPointer = (e: PointerEvent) => {
-    const btn = (e.target as HTMLElement).closest<HTMLElement>('[data-hold],[data-tap]');
-    if (!btn) return;
-    const k = btn.dataset.hold as keyof Input | undefined;
-    if (k) input[k] = e.type === 'pointerdown';
-    else if (e.type === 'pointerdown') g = g.phase === 'ready' || g.phase === 'over' ? start(g) : togglePause(g);
-    sync();
-  };
-  const pointerTypes = ['pointerdown', 'pointerup', 'pointercancel', 'pointerout'] as const;
-
-  addEventListener('keydown', onKey);
-  addEventListener('keyup', onKey);
-  addEventListener('blur', release);
-  document.addEventListener('visibilitychange', onVisibility);
-  for (const type of pointerTypes) touch?.addEventListener(type, onPointer);
-  if (ctx) document.fonts?.ready.then(() => draw());
-  sync();
-
-  unmount = () => {
-    removeEventListener('keydown', onKey);
-    removeEventListener('keyup', onKey);
-    removeEventListener('blur', release);
-    document.removeEventListener('visibilitychange', onVisibility);
-    release();
-    boom = null;
-    cancelAnimationFrame(raf);
-    raf = 0;
-    if (g.phase === 'playing') g = togglePause(g);
+  stage.addEventListener('pointerdown', clickPlant);
+  refresh();
+  cleanup = () => {
+    form.removeEventListener('submit', submit);
+    stage.removeEventListener('pointerdown', clickPlant);
+    resize.disconnect();
+    dispose(plants);
+    dispose(scene);
+    renderer?.dispose();
   };
 }
