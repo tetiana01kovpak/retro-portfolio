@@ -178,7 +178,9 @@ export function mountStage(stage: HTMLElement, select: (id: string) => void): Ga
   marker.rotation.x = -Math.PI / 2;
   const plants = new THREE.Group();
   scene.add(plants);
-  let spread = 0;
+  const view = new THREE.Vector3(0, 0.55, 0.84).normalize();
+  const bounds = new THREE.Box3();
+  let framed: THREE.Vector3[] = [];
   let last: [Habit[], string | null] = [[], null];
   let fallback: GardenStage | null = null;
 
@@ -187,12 +189,18 @@ export function mountStage(stage: HTMLElement, select: (id: string) => void): Ga
     const height = stage.clientHeight || 170;
     renderer.setSize(width, height, false);
     camera.aspect = width / height;
-    const bed = spread + 0.75;
-    ground.scale.set(bed, 1, bed);
     const tan = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
-    const distance = bed * 0.4 + Math.max(bed / (tan * camera.aspect), (bed * 0.5 + 0.7) / tan);
-    camera.position.set(0, distance * 0.55 + 0.4, distance * 0.84);
-    camera.lookAt(0, 0.3, 0);
+    const target = bounds.getCenter(new THREE.Vector3());
+    const right = new THREE.Vector3(1, 0, 0);
+    const up = new THREE.Vector3().crossVectors(view, right);
+    let distance = 0;
+    for (const point of framed) {
+      const offset = point.clone().sub(target);
+      const depth = offset.dot(view);
+      distance = Math.max(distance, depth + Math.abs(offset.dot(right)) / (tan * camera.aspect), depth + Math.abs(offset.dot(up)) / tan);
+    }
+    camera.position.copy(target).addScaledVector(view, distance * 1.08);
+    camera.lookAt(target);
     camera.updateProjectionMatrix();
     camera.updateMatrixWorld();
     scene.updateMatrixWorld();
@@ -237,7 +245,7 @@ export function mountStage(stage: HTMLElement, select: (id: string) => void): Ga
       last = [habits, selected];
       if (fallback) return fallback.draw(habits, selected);
       clear();
-      spread = 0;
+      let spread = 0;
       marker.visible = false;
       habits.forEach((habit, i) => {
         const [x, z, radius] = spot(i);
@@ -251,6 +259,19 @@ export function mountStage(stage: HTMLElement, select: (id: string) => void): Ga
         }
         plants.add(plant);
       });
+      const bed = spread + 0.75;
+      ground.scale.set(bed, 1, bed);
+      const plantBox = new THREE.Box3().setFromObject(plants);
+      framed = Array.from({ length: 24 }, (_, i) => {
+        const a = (i / 6) * Math.PI;
+        return new THREE.Vector3(Math.cos(a) * bed, i < 12 ? 0 : -0.2, Math.sin(a) * bed);
+      });
+      if (!plantBox.isEmpty()) {
+        for (const x of [plantBox.min.x, plantBox.max.x]) for (const y of [plantBox.min.y, plantBox.max.y]) for (const z of [plantBox.min.z, plantBox.max.z]) {
+          framed.push(new THREE.Vector3(x, y, z));
+        }
+      }
+      bounds.setFromPoints(framed);
       render();
     },
     dispose() {

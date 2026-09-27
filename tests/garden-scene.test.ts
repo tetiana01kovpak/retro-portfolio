@@ -6,20 +6,20 @@ import { mountGame, unmountGame } from '../src/gameview.ts';
 import { growth, makePlant, maxGrowth, mountStage } from '../src/gardenscene.ts';
 import { render } from '../src/screens.ts';
 
-const gl = vi.hoisted(() => ({ fail: false, renderers: [] as { canvas: HTMLCanvasElement; renders: number; disposed: boolean }[] }));
+const gl = vi.hoisted(() => ({ fail: false, renderers: [] as { canvas: HTMLCanvasElement; renders: number; disposed: boolean; scene?: THREE.Scene; camera?: THREE.Camera }[] }));
 
 vi.mock('three', async (original) => {
   const three = await original<typeof import('three')>();
   class WebGLRenderer {
     domElement = document.createElement('canvas');
-    state = { canvas: this.domElement, renders: 0, disposed: false };
+    state: (typeof gl.renderers)[number] = { canvas: this.domElement, renders: 0, disposed: false };
     constructor() {
       if (gl.fail) throw new Error('Error creating WebGL context.');
       gl.renderers.push(this.state);
     }
     setPixelRatio() {}
     setSize() {}
-    render() { this.state.renders++; }
+    render(scene: THREE.Scene, camera: THREE.Camera) { Object.assign(this.state, { scene, camera }); this.state.renders++; }
     dispose() { this.state.disposed = true; }
   }
   return { ...three, WebGLRenderer };
@@ -203,4 +203,33 @@ test('tapping a plant in the scene selects its habit', () => {
   expect(select).toHaveBeenCalledWith('mushroom-4');
   view.dispose();
   expect(stage.children.length).toBe(0);
+});
+
+test('the camera keeps every full-grown plant and the bed in view at any stage shape', () => {
+  for (const [width, height] of [[300, 170], [1030, 160], [320, 130]]) {
+    for (const count of [1, 5, 20]) {
+      const stage = document.createElement('div');
+      Object.defineProperty(stage, 'clientWidth', { value: width });
+      Object.defineProperty(stage, 'clientHeight', { value: height });
+      const view = mountStage(stage, () => {});
+      const habits = Array.from({ length: count }, (_, i) => ({ ...habit(plantTypes[i % 5], maxGrowth), id: String(i) }));
+      view.draw(habits, '0');
+      const { scene, camera } = gl.renderers.at(-1)!;
+      const box = new THREE.Box3().setFromObject(scene!.getObjectByName('ground')!);
+      for (const m of meshes(scene!)) if (m.userData.id) box.expandByObject(m);
+      for (const x of [box.min.x, box.max.x]) for (const y of [box.min.y, box.max.y]) {
+        const p = new THREE.Vector3(x * 0.99, y, 0).project(camera!);
+        expect(Math.abs(p.x), `${width}x${height} ${count} x`).toBeLessThanOrEqual(1);
+        expect(Math.abs(p.y), `${width}x${height} ${count} y`).toBeLessThanOrEqual(1);
+      }
+      let top = -Infinity;
+      for (const m of meshes(scene!)) if (m.userData.id) {
+        const b = new THREE.Box3().setFromObject(m);
+        const c = b.getCenter(new THREE.Vector3());
+        top = Math.max(top, new THREE.Vector3(c.x, b.max.y, c.z).project(camera!).y);
+      }
+      expect(top, `${width}x${height} ${count} top`).toBeLessThanOrEqual(1);
+      view.dispose();
+    }
+  }
 });
