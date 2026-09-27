@@ -33,12 +33,12 @@ docker compose up -d --build   # http://localhost:8080, health at /health
 
 [`.github/workflows/pages.yml`](.github/workflows/pages.yml) tests, builds and publishes `dist/` on every push to
 `main` (or run it by hand from the Actions tab). The site is served at
-<https://tetiana01kovpak.github.io/portfolio-test/>. Pages on a private repository needs a paid GitHub plan.
+<https://tetiana01kovpak.github.io/retro-portfolio/>.
 
 One-time setup: repo **Settings > Pages > Build and deployment > Source**: **GitHub Actions**.
 
 The workflow takes the base path from `actions/configure-pages`, so the same build works under
-`/portfolio-test/` and at the root of a custom domain. No rewrite is needed because routing is hash-based.
+`/retro-portfolio/` and at the root of a custom domain. No rewrite is needed because routing is hash-based.
 Pages can't set custom headers, so the long `Cache-Control` on `/assets/*` only applies on Render and Docker.
 
 **Custom domain (later):**
@@ -54,10 +54,10 @@ Pages can't set custom headers, so the long `Cache-Control` on `/assets/*` only 
 
 ## Deploy on Render
 
-[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/tetiana01kovpak/portfolio-test)
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/tetiana01kovpak/retro-portfolio)
 
-The repository is private, so Render needs access to it first: connect GitHub in Render and grant the
-Render GitHub app access to `tetiana01kovpak/portfolio-test`.
+For automatic deploys on push, connect GitHub in Render and grant the
+Render GitHub app access to `tetiana01kovpak/retro-portfolio`.
 
 **Blueprint (one click):** Render dashboard > **New** > **Blueprint** > pick the repo. Render reads
 [`render.yaml`](render.yaml) and creates the static site.

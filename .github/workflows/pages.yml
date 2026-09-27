@@ -25,7 +25,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm test
-      # "/portfolio-test" on github.io, "" once a custom domain is set.
+      # "/retro-portfolio" on github.io, "" once a custom domain is set.
       - id: pages
         uses: actions/configure-pages@v5
       - run: npm run build -- --base="${{ steps.pages.outputs.base_path }}/"
