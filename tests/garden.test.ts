@@ -10,10 +10,19 @@ const habit = (dates: string[] = [], type: Habit['type'] = 'cactus'): Habit => (
 
 afterEach(() => {
   unmountGame();
+  vi.unstubAllGlobals();
   localStorage.clear();
   vi.useRealTimers();
-  vi.restoreAllMocks();
 });
+
+const failWrites = () => {
+  const real = localStorage;
+  vi.stubGlobal('localStorage', {
+    getItem: (key: string) => real.getItem(key),
+    removeItem: (key: string) => real.removeItem(key),
+    setItem: () => { throw new Error('quota'); },
+  });
+};
 
 test('localDate uses the local calendar day, not UTC', () => {
   expect(localDate(new Date(2026, 0, 5, 0, 1))).toBe('2026-01-05');
@@ -57,14 +66,29 @@ test('saved habits reload with the same id, plant type and dates', () => {
   const h = complete(createHabit('Stretch', 'mushroom')!, '2026-04-02');
   expect(saveHabits([h])).toBe(true);
   expect(JSON.parse(localStorage.getItem(storageKey)!).version).toBe(1);
-  expect(loadHabits()).toEqual([h]);
-  expect(loadHabits()[0].type).toBe('mushroom');
+  expect(loadHabits()).toEqual({ habits: [h], writable: true });
 });
 
-test('empty, malformed or unknown saved data loads as an empty garden', () => {
-  for (const raw of [null, '', '{', 'null', '42', '"x"', '{"version":2,"habits":[]}', '{"version":1}']) {
-    expect(parseGarden(raw)).toEqual([]);
+test('malformed or unknown saved data reads as unreadable', () => {
+  for (const raw of ['', '{', 'null', '42', '"x"', '{"version":2,"habits":[]}', '{"version":1}']) {
+    expect(parseGarden(raw)).toBeNull();
   }
+});
+
+test('unreadable saved data is backed up before the garden can save over it', () => {
+  const raw = '{"version":2,"habits":[{"id":"x"}]}';
+  localStorage.setItem(storageKey, raw);
+  expect(loadHabits()).toEqual({ habits: [], writable: true });
+  const backups = Object.keys(localStorage).filter((k) => k.startsWith(`${storageKey}-backup-`));
+  expect(backups.map((k) => localStorage.getItem(k))).toEqual([raw]);
+  expect(localStorage.getItem(storageKey)).toBeNull();
+});
+
+test('unreadable data that cannot be backed up blocks saving', () => {
+  localStorage.setItem(storageKey, '{');
+  failWrites();
+  expect(loadHabits()).toEqual({ habits: [], writable: false });
+  expect(localStorage.getItem(storageKey)).toBe('{');
 });
 
 test('invalid habits, dates and duplicate ids are dropped; the earlier array format still loads', () => {
@@ -84,11 +108,14 @@ test('unavailable storage loads empty and saves report failure without throwing'
     getItem: () => { throw new Error('denied'); },
     setItem: () => { throw new Error('quota'); },
   } as unknown as Storage;
-  expect(loadHabits(broken)).toEqual([]);
+  expect(loadHabits(broken)).toEqual({ habits: [], writable: false });
   expect(saveHabits([habit()], broken)).toBe(false);
-  expect(loadHabits(null)).toEqual([]);
+  expect(loadHabits(null)).toEqual({ habits: [], writable: false });
   expect(saveHabits([habit()], null)).toBe(false);
 });
+
+const button = (root: HTMLElement, text: string) =>
+  [...root.querySelectorAll<HTMLButtonElement>('#garden-detail button, #garden-list button')].find((b) => b.textContent!.includes(text))!;
 
 const mount = () => {
   const root = document.createElement('div');
@@ -106,7 +133,7 @@ test('the garden screen stays usable with malformed saved data', () => {
 });
 
 test('the garden screen counts a day once and warns when saving fails', () => {
-  vi.spyOn(localStorage, 'setItem').mockImplementation(() => { throw new Error('quota'); });
+  failWrites();
   const root = mount();
   const form = root.querySelector<HTMLFormElement>('#garden-form')!;
   root.querySelector<HTMLInputElement>('#garden-name')!.value = 'Read';
@@ -117,4 +144,33 @@ test('the garden screen counts a day once and warns when saving fails', () => {
   done.click();
   expect(detail.textContent).toContain('Streak: 1 · Total: 1');
   expect(detail.textContent).toContain('Storage is unavailable');
+});
+
+test('a change in this tab keeps progress saved by another tab', () => {
+  saveHabits([{ id: 'w', name: 'Walk', type: 'tree', dates: [] }, { id: 'r', name: 'Read', type: 'flower', dates: [] }]);
+  const root = mount();
+  const today = localDate();
+  saveHabits([{ id: 'w', name: 'Walk', type: 'tree', dates: [today] }, { id: 'r', name: 'Read', type: 'flower', dates: [] }]);
+  button(root, 'Read').click();
+  button(root, 'Mark done').click();
+  expect(loadHabits().habits.map((h) => h.dates)).toEqual([[today], [today]]);
+});
+
+test('another tab saving refreshes the open garden', () => {
+  saveHabits([{ id: 'w', name: 'Walk', type: 'tree', dates: [] }]);
+  const root = mount();
+  saveHabits([{ id: 'w', name: 'Walk', type: 'tree', dates: [localDate()] }]);
+  dispatchEvent(new StorageEvent('storage', { key: storageKey }));
+  expect(root.querySelector('#garden-detail')!.textContent).toContain('Today: done');
+});
+
+test('a garden left open past midnight offers the new day', () => {
+  vi.useFakeTimers({ toFake: ['Date', 'setInterval', 'clearInterval'] });
+  vi.setSystemTime(new Date(2026, 4, 1, 23, 50));
+  saveHabits([{ id: 'w', name: 'Walk', type: 'tree', dates: ['2026-05-01'] }]);
+  const root = mount();
+  expect(button(root, 'Done today').disabled).toBe(true);
+  vi.advanceTimersByTime(20 * 60_000);
+  expect(button(root, 'Mark done').disabled).toBe(false);
+  expect(root.querySelector('#garden-detail')!.textContent).toContain('Today: not yet · Streak: 1');
 });

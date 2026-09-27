@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import {
-  complete, createHabit, type Habit, isDone, loadHabits, localDate, type PlantType, saveHabits, streak, total,
+  complete, createHabit, type Habit, isDone, loadHabits, localDate, type PlantType, saveHabits, storageKey, streak, total,
 } from './garden';
 
 const colors: Record<PlantType, number> = {
@@ -85,9 +85,15 @@ export function mountGame(root: HTMLElement, _reduced: MediaQueryList) {
   const form = root.querySelector<HTMLFormElement>('#garden-form')!;
   const list = root.querySelector<HTMLElement>('#garden-list')!;
   const detail = root.querySelector<HTMLElement>('#garden-detail')!;
-  let habits = loadHabits();
-  let saved = true;
-  const save = () => { saved = saveHabits(habits); };
+  let { habits, writable } = loadHabits();
+  let shownDay = localDate();
+  const read = () => { ({ habits, writable } = loadHabits()); };
+  const change = (apply: (current: Habit[]) => Habit[]) => {
+    if (writable) read();
+    habits = apply(habits);
+    writable = writable && saveHabits(habits);
+    refresh();
+  };
   let selected = habits[0]?.id || null;
   let renderer: THREE.WebGLRenderer | null = null;
   const scene = new THREE.Scene();
@@ -144,6 +150,7 @@ export function mountGame(root: HTMLElement, _reduced: MediaQueryList) {
     });
     list.replaceChildren();
     const today = localDate();
+    shownDay = today;
     for (const habit of habits) {
       const button = document.createElement('button');
       button.className = 'garden-item';
@@ -168,23 +175,22 @@ export function mountGame(root: HTMLElement, _reduced: MediaQueryList) {
       done.textContent = isDone(habit, today) ? '[ Done today ]' : '[ Mark done ]';
       done.disabled = isDone(habit, today);
       done.addEventListener('click', () => {
-        habits = habits.map((item) => (item.id === habit.id ? complete(item) : item));
-        save();
-        refresh();
+        change((current) => current.map((item) => (item.id === habit.id ? complete(item) : item)));
       });
       const remove = document.createElement('button');
       remove.className = 'btn';
       remove.type = 'button';
       remove.textContent = '[ Remove ]';
       remove.addEventListener('click', () => {
-        habits = habits.filter((item) => item.id !== habit.id);
-        selected = habits[0]?.id || null;
-        save();
-        refresh();
+        change((current) => {
+          const rest = current.filter((item) => item.id !== habit.id);
+          selected = rest[0]?.id || null;
+          return rest;
+        });
       });
       detail.append(title, stats, done, remove);
     }
-    if (!saved) {
+    if (!writable) {
       const warning = document.createElement('p');
       warning.textContent = 'Storage is unavailable: progress will not survive a reload.';
       detail.append(warning);
@@ -196,11 +202,9 @@ export function mountGame(root: HTMLElement, _reduced: MediaQueryList) {
     const data = new FormData(form);
     const habit = createHabit(String(data.get('name') || ''), String(data.get('type')));
     if (!habit) return;
-    habits.push(habit);
     selected = habit.id;
-    save();
     form.reset();
-    refresh();
+    change((current) => [...current, habit]);
   };
   form.addEventListener('submit', submit);
   const resize = new ResizeObserver(render3d);
@@ -216,10 +220,17 @@ export function mountGame(root: HTMLElement, _reduced: MediaQueryList) {
     if (id) { selected = id; refresh(); }
   };
   stage.addEventListener('pointerdown', clickPlant);
+  const sync = (event: StorageEvent) => {
+    if (writable && (event.key === storageKey || event.key === null)) { read(); refresh(); }
+  };
+  addEventListener('storage', sync);
+  const dayCheck = setInterval(() => { if (localDate() !== shownDay) refresh(); }, 60_000);
   refresh();
   cleanup = () => {
     form.removeEventListener('submit', submit);
     stage.removeEventListener('pointerdown', clickPlant);
+    removeEventListener('storage', sync);
+    clearInterval(dayCheck);
     resize.disconnect();
     dispose(plants);
     dispose(scene);
