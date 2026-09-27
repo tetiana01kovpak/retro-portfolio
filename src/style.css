@@ -960,6 +960,10 @@ kbd {
 .game-keys { color: var(--phosphor-dim); font-size: 0.82em; }
 .game-stage { flex: 1 0 160px; min-height: 160px; max-height: 260px; background: #102b20; border: 1px solid var(--phosphor-dim); display: grid; place-items: center; overflow: hidden; text-align: center; }
 .game-stage canvas { display: block; width: 100%; height: 100%; }
+.garden-fallback { align-content: center; gap: 0.3em; padding: 0.4em; font-size: 0.85em; color: var(--phosphor-dim); }
+.garden-text { display: flex; flex-wrap: wrap; justify-content: center; align-items: end; gap: 0.35em; color: var(--phosphor-hi); line-height: 1; }
+.garden-glyph { cursor: pointer; }
+.garden-glyph[aria-current='true'] { text-decoration: underline; color: #f4ff9a; }
 .garden-form { display: flex; align-items: end; gap: 0.4em; flex-wrap: wrap; }
 .garden-form label { display: flex; flex: 1 1 130px; flex-direction: column; gap: 0.08em; font-size: 0.78em; color: var(--phosphor-dim); }
 .garden-form input, .garden-form select { width: 100%; box-sizing: border-box; background: #10251b; color: var(--phosphor-hi); border: 1px solid var(--phosphor-dim); font: inherit; font-size: 1.25em; min-height: 30px; }
