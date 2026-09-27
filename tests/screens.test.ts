@@ -8,11 +8,11 @@ test('every screen renders', () => {
   for (const s of screens) assert.ok(render[s]().length > 200, s);
 });
 
-test('game screen has a canvas, HUD and touch controls', () => {
+test('game screen has the garden stage, form, list and detail', () => {
   const html = render.game();
-  assert.ok(html.includes('<canvas'));
-  for (const id of ['game-score', 'game-lives', 'game-hi']) assert.ok(html.includes(`id="${id}"`), id);
-  for (const k of ['left', 'right', 'fire']) assert.ok(html.includes(`data-hold="${k}"`), k);
+  assert.ok(html.includes('Habit Garden'));
+  for (const id of ['garden-stage', 'garden-form', 'garden-list', 'garden-detail']) assert.ok(html.includes(`id="${id}"`), id);
+  for (const t of ['flower', 'tree', 'cactus', 'mushroom', 'crystal']) assert.ok(html.includes(`value="${t}"`), t);
 });
 
 test('projects screen lists every project with its links', () => {

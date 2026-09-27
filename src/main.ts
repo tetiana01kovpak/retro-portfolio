@@ -214,7 +214,8 @@ addEventListener('keydown', (e) => {
     if (e.key !== 'Tab') go('welcome');
     return;
   }
-  const typing = e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement;
+  const typing = e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement
+    || e.target instanceof HTMLSelectElement;
   if (e.key === 'Escape') {
     if (typing) (e.target as HTMLElement).blur();
     else go('welcome');

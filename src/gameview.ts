@@ -25,7 +25,8 @@ const streak = (dates: string[]) => {
 const load = (): Habit[] => {
   try {
     const data = JSON.parse(localStorage.getItem(key) || '[]');
-    return Array.isArray(data) ? data : [];
+    return Array.isArray(data) ? data.filter((h): h is Habit => typeof h?.id === 'string' && typeof h.name === 'string'
+      && types.includes(h.type) && Array.isArray(h.dates) && h.dates.every((d: unknown) => typeof d === 'string')) : [];
   } catch { return []; }
 };
 const save = (habits: Habit[]) => {
