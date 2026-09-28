@@ -51,7 +51,7 @@ const links = (p: Project) => `${ext(p.repo, 'Source')}${p.live ? ext(p.live, 'L
 export const projectDetail = (i: number) => {
   const p = projects[i];
   return `
-  <div class="project-detail" role="dialog" tabindex="-1" aria-modal="true" aria-label="${esc(p.name)}">
+  <div class="project-detail" data-for="${i}" role="dialog" tabindex="-1" aria-modal="true" aria-label="${esc(p.name)}">
     <p class="cmd">C:\\PROJECTS&gt; TYPE ${esc(p.file)}</p>
     <div class="detail-head">${pixels(p.icon, 'detail-icon')}<h2 class="title">${esc(p.name)}</h2></div>
     ${p.description.map((d) => `<p>${esc(d)}</p>`).join('')}

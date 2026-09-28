@@ -220,7 +220,7 @@ addEventListener('keydown', (e) => {
     || e.target instanceof HTMLSelectElement;
   if (e.key === 'Escape') {
     if (typing) (e.target as HTMLElement).blur();
-    else go('welcome');
+    else if (!closeDetail()) go('welcome');
     return;
   }
   if (typing) return;
@@ -236,15 +236,20 @@ addEventListener('keydown', (e) => {
 
 const next = () => screens[(screens.indexOf(current as Screen) + 1) % screens.length];
 
+function closeDetail() {
+  const detail = shell.querySelector('.project-detail');
+  if (!detail) return false;
+  detail.remove();
+  pane.querySelector<HTMLElement>(`[data-project="${detail.getAttribute('data-for')}"]`)?.focus({ preventScroll: true });
+  return true;
+}
+
 pane.addEventListener('click', (e) => {
   const btn = (e.target as HTMLElement).closest<HTMLElement>('[data-project]');
   if (!btn) return;
   shell.insertAdjacentHTML('beforeend', projectDetail(Number(btn.dataset.project)));
   const detail = shell.querySelector<HTMLElement>('.project-detail')!;
-  detail.querySelector('[data-back]')!.addEventListener('click', () => {
-    detail.remove();
-    btn.focus({ preventScroll: true });
-  });
+  detail.querySelector('[data-back]')!.addEventListener('click', closeDetail);
   detail.focus({ preventScroll: true });
 });
 

@@ -9,10 +9,12 @@ npm ci
 npm run dev        # http://localhost:5173
 ```
 
-Deep links skip the boot animation: `#welcome`, `#about`, `#projects`, `#experience`, `#contact`, `#game`.
-Keys: `1`–`5` or `←`/`→` switch screens, `Esc` goes home, any key skips the boot. The power button on the case reboots.
+Deep links skip the boot animation: `#welcome`, `#about`, `#projects`, `#experience`, `#game`, `#contact`.
+Keys: `1`–`5` (About, Projects, Experience, App, Contact) or `←`/`→` switch screens, `Esc` goes home, any key
+skips the boot. The **Next** button at the bottom centre goes to the next screen and wraps from Contact to About.
+A project opens a full-screen detail; `Esc` or **[ Back ]** returns to the list. The power button on the case reboots.
 
-The Habit Garden screen (`#game`) is a small Three.js habit tracker: name a habit and pick a plant (flower, tree,
+The App screen (`#game`) is Habit Garden, a small Three.js habit tracker: name a habit and pick a plant (flower, tree,
 cactus, mushroom or crystal), then **Mark done** once a day to make it grow. Select a plant to see today's status,
 the current streak and total completions; **Remove** deletes it. The arrow keys, `Home` and `End` move between
 plants instead of switching screens there. Habits are kept in this browser's `localStorage` only: no account,

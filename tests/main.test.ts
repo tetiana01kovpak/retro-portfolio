@@ -49,14 +49,52 @@ test('Click opens About, one screen at a time', async () => {
 test('keyboard switches screens and Escape goes home', async () => {
   await press('2');
   expect(location.hash).toBe('#projects');
-  expect($('pane').textContent).toContain('Habbit Garden');
+  expect($('pane').textContent).toContain('ePharmacy');
+  expect($('pane').textContent).not.toContain('Habbit Garden');
   await press('ArrowRight');
   expect(location.hash).toBe('#experience');
   await press('ArrowLeft');
   await press('ArrowLeft');
   expect(location.hash).toBe('#about');
   await press('ArrowLeft');
-  expect(location.hash).toBe('#game');
+  expect(location.hash).toBe('#contact');
+  await press('Escape');
+  expect(visible()).toEqual(['view-welcome']);
+});
+
+test('Next steps through every screen and wraps from Contact to About', async () => {
+  $('btn-click').click();
+  await settle();
+  const seen = [];
+  for (let k = 0; k < 5; k++) {
+    $('btn-next').click();
+    await settle();
+    seen.push(location.hash);
+  }
+  expect(seen).toEqual(['#projects', '#experience', '#game', '#contact', '#about']);
+});
+
+test('a project opens a detail; Esc and Back return to the list with focus on it', async () => {
+  await press('2');
+  const openBtn = () => [...document.querySelectorAll<HTMLElement>('.project-open')].find((b) => b.textContent!.includes('TravelTrucks'))!;
+  openBtn().click();
+  const detail = () => document.querySelector('.project-detail');
+  expect(detail()?.textContent).toContain('TravelTrucks');
+  expect(detail()?.querySelector('svg rect')).not.toBeNull();
+  expect(document.activeElement).toBe(detail());
+  await press('Escape');
+  expect(detail()).toBeNull();
+  expect(visible()).toEqual(['shell']);
+  expect(location.hash).toBe('#projects');
+  expect(document.activeElement).toBe(openBtn());
+  openBtn().click();
+  detail()!.querySelector<HTMLElement>('[data-back]')!.click();
+  expect(detail()).toBeNull();
+  expect(document.activeElement).toBe(openBtn());
+  openBtn().click();
+  await press('3');
+  expect(location.hash).toBe('#experience');
+  expect(detail()).toBeNull();
   await press('Escape');
   expect(visible()).toEqual(['view-welcome']);
 });
@@ -68,10 +106,10 @@ test('navigating right after pressing power cancels the pending reboot', async (
   expect(visible()).toEqual(['view-welcome']);
 });
 
-test('key 5 opens the garden; plant, mark done, then remove a habit', async () => {
+test('key 4 opens the garden; plant, mark done, then remove a habit', async () => {
   $('btn-click').click();
   await settle();
-  await press('5');
+  await press('4');
   expect(location.hash).toBe('#game');
   expect(document.querySelector('[aria-current="page"]')?.getAttribute('data-screen')).toBe('game');
   expect(document.title.startsWith('Habit Garden — ')).toBe(true);
@@ -106,4 +144,8 @@ test('digits typed in the garden form stay on the garden', async () => {
   expect(location.hash).toBe('#game');
   await press('3');
   expect(location.hash).toBe('#experience');
+  await press('4');
+  $('btn-next').click();
+  await settle();
+  expect(location.hash).toBe('#contact');
 });
