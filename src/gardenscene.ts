@@ -132,16 +132,22 @@ function textStage(stage: HTMLElement, select: (id: string) => void, reason: str
   note.textContent = `${reason} Showing a text garden; every habit control below still works.`;
   const bed = document.createElement('div');
   bed.className = 'garden-text';
+  bed.setAttribute('role', 'group');
+  bed.setAttribute('aria-label', 'Text garden');
   stage.replaceChildren(note, bed);
   return {
     draw(habits, selected) {
       bed.replaceChildren(...habits.map((habit) => {
-        const plant = document.createElement('span');
+        const plant = document.createElement('button');
+        plant.type = 'button';
         plant.className = 'garden-glyph';
         plant.dataset.id = habit.id;
+        plant.dataset.focus = `glyph:${habit.id}`;
         plant.style.fontSize = `${1 + growth(habit) / 15}em`;
         plant.textContent = glyphs[habit.type] || glyphs.flower;
         plant.title = `${habit.name}: ${total(habit)} done`;
+        plant.setAttribute('aria-label', plant.title);
+        plant.tabIndex = habit.id === selected || (!habits.some((h) => h.id === selected) && habit === habits[0]) ? 0 : -1;
         if (habit.id === selected) plant.setAttribute('aria-current', 'true');
         plant.addEventListener('click', () => select(habit.id));
         return plant;

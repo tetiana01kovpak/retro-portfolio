@@ -107,7 +107,7 @@ const gameView = () => `
   <div class="game">
     <p class="cmd">C:\\&gt; RUN GARDEN.EXE</p>
     <h2 class="game-title">Habit Garden</h2>
-    <p class="game-keys">Plant a habit. Mark it done each day to help it grow. Select a plant to see its progress.</p>
+    <p class="game-keys">Plant a habit. Mark it done each day to help it grow. Select a plant to see its progress; <kbd>↑</kbd><kbd>↓</kbd> move between plants.</p>
     <div class="game-stage" id="garden-stage" aria-label="3D habit garden"></div>
     <form class="garden-form" id="garden-form">
       <label>NEW HABIT <input id="garden-name" name="name" maxlength="40" required placeholder="e.g. Read for 10 minutes" /></label>
@@ -115,9 +115,10 @@ const gameView = () => `
       <button class="btn" type="submit">[ Plant ]</button>
     </form>
     <div class="garden-bottom">
-      <div class="garden-list" id="garden-list" aria-label="Your habits"></div>
-      <div class="garden-detail" id="garden-detail" aria-live="polite"></div>
+      <div class="garden-list" id="garden-list" role="group" aria-label="Your habits"></div>
+      <div class="garden-detail" id="garden-detail"></div>
     </div>
+    <p class="garden-status" id="garden-status" role="status"></p>
   </div>`;
 
 export const render: Record<Screen, () => string> = {

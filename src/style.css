@@ -962,25 +962,64 @@ kbd {
 .game-stage canvas { display: block; width: 100%; height: 100%; }
 .garden-fallback { align-content: center; gap: 0.3em; padding: 0.4em; font-size: 0.85em; color: var(--phosphor-dim); }
 .garden-text { display: flex; flex-wrap: wrap; justify-content: center; align-items: end; gap: 0.35em; color: var(--phosphor-hi); line-height: 1; }
-.garden-glyph { cursor: pointer; }
+.garden-glyph { cursor: pointer; font: inherit; color: inherit; background: transparent; border: 0; padding: 0 0.1em; line-height: 1; }
 .garden-glyph[aria-current='true'] { text-decoration: underline; color: #f4ff9a; }
 .garden-form { display: flex; align-items: end; gap: 0.4em; flex-wrap: wrap; }
 .garden-form label { display: flex; flex: 1 1 130px; flex-direction: column; gap: 0.08em; font-size: 0.78em; color: var(--phosphor-dim); }
 .garden-form input, .garden-form select { width: 100%; box-sizing: border-box; background: #10251b; color: var(--phosphor-hi); border: 1px solid var(--phosphor-dim); font: inherit; font-size: 1.25em; min-height: 30px; }
+.garden-form input:focus-visible, .garden-form select:focus-visible { outline: none; border-color: var(--phosphor-hi); box-shadow: 0 0 0 1px var(--phosphor-hi), 0 0 10px rgba(77, 255, 136, 0.5); }
 .garden-form .btn { min-height: 30px; }
 .garden-bottom { display: grid; grid-template-columns: minmax(110px, 0.8fr) minmax(0, 1.4fr); gap: 0.5em; min-height: 102px; }
 .garden-list { overflow: auto; max-height: 115px; border: 1px solid var(--phosphor-dim); padding: 0.15em; }
-.garden-item { display: block; width: 100%; text-align: left; color: var(--phosphor); background: transparent; border: 0; font: inherit; cursor: pointer; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.garden-item { display: block; width: 100%; min-height: 1.4em; text-align: left; color: var(--phosphor); background: transparent; border: 0; font: inherit; cursor: pointer; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .garden-item[aria-pressed='true'] { background: #285137; color: var(--phosphor-hi); }
+.garden-item:focus-visible, .garden-glyph:focus-visible { outline: 1px solid var(--phosphor-hi); outline-offset: -1px; box-shadow: 0 0 10px rgba(77, 255, 136, 0.5); }
 .garden-detail { min-width: 0; font-size: 0.87em; }
 .garden-detail strong { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--phosphor-hi); }
 .garden-detail p { margin: 0.1em 0 0.3em; }
-.garden-detail .btn { margin-right: 0.3em; padding: 0.12em 0.3em; }
-.garden-detail .btn:disabled { opacity: 0.5; cursor: default; }
+.garden-actions { display: flex; flex-wrap: wrap; gap: 0.3em; }
+.garden-actions .btn { padding: 0.12em 0.3em; }
+.garden-actions .btn:disabled { opacity: 0.5; cursor: default; }
+.garden-status { min-height: 1.2em; font-size: 0.82em; color: var(--amber); }
 @media (max-width: 480px), (max-height: 520px) {
   .game-stage { flex-basis: 130px; min-height: 130px; max-height: 180px; }
   .garden-bottom { grid-template-columns: 1fr; }
   .garden-list { max-height: 62px; }
+}
+@media (max-width: 480px) {
+  .garden-form label:first-child { flex-basis: 100%; }
+  .garden-form .btn { flex: 0 0 auto; }
+}
+@media (min-width: 721px), (max-height: 520px) and (orientation: landscape) {
+  .game {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+    grid-template-rows: auto auto auto auto auto 1fr;
+    grid-template-areas: 'cmd cmd' 'title title' 'keys keys' 'stage form' 'stage bottom' 'stage status';
+    column-gap: 0.6em;
+    height: 100%;
+  }
+  .game > .cmd { grid-area: cmd; }
+  .game-title { grid-area: title; }
+  .game-keys { grid-area: keys; }
+  .game-stage { grid-area: stage; min-height: 150px; max-height: none; }
+  .garden-form { grid-area: form; }
+  .garden-bottom { grid-area: bottom; grid-template-columns: 1fr; min-height: 0; }
+  .garden-list { min-height: 3.6em; }
+  .garden-status { grid-area: status; }
+}
+@media (max-height: 520px) and (orientation: landscape) {
+  .game { height: auto; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); grid-template-areas: 'stage cmd' 'stage title' 'stage keys' 'stage form' 'stage bottom' 'stage status'; }
+  .game > .cmd, .game-keys { display: none; }
+  .game-stage { position: sticky; top: 0; align-self: start; min-height: 120px; height: max(120px, calc(100dvh - 215px)); }
+}
+@media (max-width: 480px) {
+  .menu a:last-child { grid-column: span 2; }
+}
+@media (pointer: coarse) {
+  .garden-item { min-height: 36px; }
+  .garden-glyph { min-width: 36px; min-height: 36px; }
+  .garden-actions .btn, .garden-form .btn, .garden-form input, .garden-form select { min-height: 40px; }
 }
 
 /* ---------- small screens ---------- */
