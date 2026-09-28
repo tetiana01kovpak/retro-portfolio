@@ -1,4 +1,3 @@
-// @vitest-environment happy-dom
 import { readFileSync } from 'node:fs';
 import { beforeAll, expect, test } from 'vitest';
 import { type Habit, saveHabits } from '../src/garden.ts';

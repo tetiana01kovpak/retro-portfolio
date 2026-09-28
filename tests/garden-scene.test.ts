@@ -1,4 +1,3 @@
-// @vitest-environment happy-dom
 import * as THREE from 'three';
 import { afterEach, expect, test, vi } from 'vitest';
 import { type Habit, localDate, plantTypes, saveHabits } from '../src/garden.ts';

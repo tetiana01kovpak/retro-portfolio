@@ -1,4 +1,3 @@
-// @vitest-environment happy-dom
 import { afterEach, expect, test, vi } from 'vitest';
 import {
   complete, createHabit, type Habit, isDone, loadHabits, localDate, parseGarden, saveHabits, storageKey, streak, total,
