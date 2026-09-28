@@ -150,7 +150,7 @@ function open(screen: Screen) {
   computer.dataset.state = 'on';
   crt.classList.add('on');
   show('shell');
-  shell.querySelector('.project-detail')?.remove();
+  closeDetail();
   pane.innerHTML = render[screen]();
   [...pane.children].forEach((el, i) => (el as HTMLElement).style.setProperty('--i', String(i)));
   pane.scrollTop = 0;
@@ -236,10 +236,15 @@ addEventListener('keydown', (e) => {
 
 const next = () => screens[(screens.indexOf(current as Screen) + 1) % screens.length];
 
+const cover = (on: boolean) => {
+  for (const el of shell.children) if (!el.classList.contains('project-detail')) (el as HTMLElement).inert = on;
+};
+
 function closeDetail() {
   const detail = shell.querySelector('.project-detail');
   if (!detail) return false;
   detail.remove();
+  cover(false);
   pane.querySelector<HTMLElement>(`[data-project="${detail.getAttribute('data-for')}"]`)?.focus({ preventScroll: true });
   return true;
 }
@@ -248,7 +253,8 @@ pane.addEventListener('click', (e) => {
   const btn = (e.target as HTMLElement).closest<HTMLElement>('[data-project]');
   if (!btn) return;
   shell.insertAdjacentHTML('beforeend', projectDetail(Number(btn.dataset.project)));
-  const detail = shell.querySelector<HTMLElement>('.project-detail')!;
+  const detail = shell.lastElementChild as HTMLElement;
+  cover(true);
   detail.querySelector('[data-back]')!.addEventListener('click', closeDetail);
   detail.focus({ preventScroll: true });
 });

@@ -82,11 +82,13 @@ test('a project opens a detail; Esc and Back return to the list with focus on it
   expect(detail()?.textContent).toContain('TravelTrucks');
   expect(detail()?.querySelector('svg rect')).not.toBeNull();
   expect(document.activeElement).toBe(detail());
+  expect(['pane', 'btn-next'].map((id) => $(id).closest<HTMLElement>('[inert]'))).not.toContain(null);
   await press('Escape');
   expect(detail()).toBeNull();
   expect(visible()).toEqual(['shell']);
   expect(location.hash).toBe('#projects');
   expect(document.activeElement).toBe(openBtn());
+  expect(document.querySelector('#shell [inert]')).toBeNull();
   openBtn().click();
   detail()!.querySelector<HTMLElement>('[data-back]')!.click();
   expect(detail()).toBeNull();
@@ -95,6 +97,7 @@ test('a project opens a detail; Esc and Back return to the list with focus on it
   await press('3');
   expect(location.hash).toBe('#experience');
   expect(detail()).toBeNull();
+  expect(document.querySelector('#shell [inert]')).toBeNull();
   await press('Escape');
   expect(visible()).toEqual(['view-welcome']);
 });

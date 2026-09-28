@@ -12,7 +12,10 @@ test('content is complete', () => {
   assert.equal(projects.length, 6);
   assert.ok(skills.length > 0 && skills.every((g) => g.items.length > 0));
   assert.ok(experience.length > 0 && education.length > 0);
-  assert.ok(profile.languages.every((l) => /^(A1|A2|B1|B2|C1|C2|Native)$/.test(l.grade)));
+  assert.deepEqual(
+    profile.languages.map((l) => [l.name, l.grade]),
+    [['English', 'C1'], ['German', 'B1'], ['Ukrainian', 'Native'], ['Russian', 'Native']],
+  );
 });
 
 test('every link is absolute https or mailto', () => {

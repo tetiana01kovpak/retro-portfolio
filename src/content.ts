@@ -156,7 +156,7 @@ export const experience: Role[] = [
     where: 'Independent & team projects',
     dates: '2024 – Present',
     points: [
-      'Built full-stack and 3D web projects (ePharmacy, TravelTrucks, Quantum JS, NoteHub) with React, Node.js, Three.js and REST APIs.',
+      'Built full-stack web projects (ePharmacy, TravelTrucks, Quantum JS, NoteHub) with React, Next.js, Node.js and REST APIs.',
       'Collaborated on Quantum JS in an Agile/Scrum team: sprints, code review, Git workflows.',
     ],
   },
