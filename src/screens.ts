@@ -1,3 +1,4 @@
+import { icon, pixels } from './icons.ts';
 import { certificates, contact, education, experience, profile, projects, skills, type Project, type Role } from './content.ts';
 
 export const screens = ['about', 'projects', 'experience', 'game', 'contact'] as const;
@@ -11,11 +12,6 @@ const ext = (href: string, label: string) =>
 
 const heading = (cmd: string, title: string) =>
   `<p class="cmd">C:\\&gt; ${cmd}</p><h2 class="title">${esc(title)}</h2>`;
-
-const pixels = (rows: string[], cls: string) =>
-  `<svg class="${cls}" viewBox="0 0 ${rows[0].length} ${rows.length}" aria-hidden="true">${rows
-    .flatMap((r, y) => [...r].map((c, x) => (c === '#' ? `<rect x="${x}" y="${y}" width="1" height="1"/>` : '')))
-    .join('')}</svg>`;
 
 const role = (r: Role) => `
   <li class="entry">
@@ -43,7 +39,7 @@ const about = () => `
     ${skills
       .map(
         (g) => `<div class="skill-group"><p class="skill-name">${esc(g.group)}</p>
-          <ul class="tags">${g.items.map((i) => `<li>${esc(i)}</li>`).join('')}</ul></div>`,
+          <ul class="tags">${g.items.map((i) => `<li>${icon(i)}${esc(i)}</li>`).join('')}</ul></div>`,
       )
       .join('')}
   </div>`;

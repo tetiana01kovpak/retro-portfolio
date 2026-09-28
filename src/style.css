@@ -766,6 +766,15 @@ kbd {
   line-height: 1.2;
   background: var(--phosphor-faint);
 }
+.skill-icon {
+  width: 0.9em;
+  height: 0.9em;
+  margin-right: 0.35em;
+  vertical-align: -0.1em;
+  fill: currentColor;
+  shape-rendering: crispEdges;
+  image-rendering: pixelated;
+}
 .tags--small {
   font-size: 0.85em;
   margin-bottom: 0.5em;

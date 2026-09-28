@@ -1,11 +1,25 @@
 import { test } from 'vitest';
 import assert from 'node:assert/strict';
-import { contact, projects } from '../src/content.ts';
+import { contact, projects, skills } from '../src/content.ts';
+import { skillIcons } from '../src/icons.ts';
 import { mailto, render, screens } from '../src/screens.ts';
 
 test('every screen renders', () => {
-  assert.deepEqual(screens, ['about', 'projects', 'experience', 'contact', 'game']);
+  assert.deepEqual(screens, ['about', 'projects', 'experience', 'game', 'contact']);
   for (const s of screens) assert.ok(render[s]().length > 200, s);
+});
+
+test('every skill has its own pixel icon', () => {
+  const names = new Set(skills.flatMap((g) => g.items));
+  assert.deepEqual(new Set(Object.keys(skillIcons)), names);
+  const bitmaps = Object.values(skillIcons).map((rows) => {
+    assert.equal(rows.length, 8);
+    for (const r of rows) assert.match(r, /^[#.]{8}$/);
+    return rows.join('');
+  });
+  assert.equal(new Set(bitmaps).size, bitmaps.length);
+  const count = skills.reduce((n, g) => n + g.items.length, 0);
+  assert.equal(render.about().match(/class="skill-icon"/g)?.length, count);
 });
 
 test('game screen has the garden stage, form, list and detail', () => {

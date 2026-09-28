@@ -9,10 +9,10 @@ test('welcome copy is spelled right', () => {
 });
 
 test('content is complete', () => {
-  assert.equal(projects.length, 5);
+  assert.equal(projects.length, 6);
   assert.ok(skills.length > 0 && skills.every((g) => g.items.length > 0));
   assert.ok(experience.length > 0 && education.length > 0);
-  assert.ok(profile.languages.every((l) => l.value > 0 && l.value <= 100));
+  assert.ok(profile.languages.every((l) => /^(A1|A2|B1|B2|C1|C2|Native)$/.test(l.grade)));
 });
 
 test('every link is absolute https or mailto', () => {
