@@ -59,6 +59,13 @@ test('arrow, Home and End keys move selection and focus through the plants', asy
   expect(active()).toBe(items()[2]);
   await key(active(), 'Home');
   expect(active()).toBe(items()[0]);
+  for (const mod of ['altKey', 'ctrlKey', 'metaKey', 'shiftKey']) {
+    const event = new KeyboardEvent('keydown', { key: 'ArrowDown', [mod]: true, bubbles: true, cancelable: true });
+    active().dispatchEvent(event);
+    await tick();
+    expect(event.defaultPrevented).toBe(false);
+    expect(active()).toBe(items()[0]);
+  }
 });
 
 test('focus survives redraws and every action reports its result', async () => {

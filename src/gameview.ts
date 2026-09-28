@@ -124,6 +124,7 @@ export function mountGame(root: HTMLElement, _reduced: MediaQueryList) {
     change((current) => [...current, habit], () => `${habit.name} planted as a ${habit.type}.`);
   };
   const move = (event: KeyboardEvent) => {
+    if (event.metaKey || event.ctrlKey || event.altKey || event.shiftKey) return;
     const item = (event.target as HTMLElement).closest<HTMLElement>('.garden-item, .garden-glyph');
     const i = habits.findIndex((habit) => habit.id === item?.dataset.id);
     if (!item || i < 0 || !(event.key in steps || event.key === 'Home' || event.key === 'End')) return;
