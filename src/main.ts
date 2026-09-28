@@ -2,7 +2,7 @@ import '@fontsource/vt323/latin-400.css';
 import './style.css';
 import { profile } from './content.ts';
 import { mountGame, unmountGame } from './gameview.ts';
-import { mailto, render, screens, type Screen } from './screens.ts';
+import { mailto, projectDetail, render, screens, type Screen } from './screens.ts';
 
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
 
@@ -150,6 +150,7 @@ function open(screen: Screen) {
   computer.dataset.state = 'on';
   crt.classList.add('on');
   show('shell');
+  shell.querySelector('.project-detail')?.remove();
   pane.innerHTML = render[screen]();
   [...pane.children].forEach((el, i) => (el as HTMLElement).style.setProperty('--i', String(i)));
   pane.scrollTop = 0;
@@ -233,7 +234,22 @@ addEventListener('keydown', (e) => {
   if (step && current !== 'game') go(screens[(screens.indexOf(current) + step + screens.length) % screens.length]);
 });
 
+const next = () => screens[(screens.indexOf(current as Screen) + 1) % screens.length];
+
+pane.addEventListener('click', (e) => {
+  const btn = (e.target as HTMLElement).closest<HTMLElement>('[data-project]');
+  if (!btn) return;
+  shell.insertAdjacentHTML('beforeend', projectDetail(Number(btn.dataset.project)));
+  const detail = shell.querySelector<HTMLElement>('.project-detail')!;
+  detail.querySelector('[data-back]')!.addEventListener('click', () => {
+    detail.remove();
+    btn.focus({ preventScroll: true });
+  });
+  detail.focus({ preventScroll: true });
+});
+
 bootView.addEventListener('click', () => go('welcome'));
+$('btn-next').addEventListener('click', () => go(next()));
 clickBtn.addEventListener('click', () => go('about'));
 $('power').addEventListener('click', () => {
   history.replaceState(null, '', location.pathname + location.search);

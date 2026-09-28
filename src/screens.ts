@@ -1,6 +1,6 @@
-import { certificates, contact, education, experience, profile, projects, skills, type Role } from './content.ts';
+import { certificates, contact, education, experience, profile, projects, skills, type Project, type Role } from './content.ts';
 
-export const screens = ['about', 'projects', 'experience', 'contact', 'game'] as const;
+export const screens = ['about', 'projects', 'experience', 'game', 'contact'] as const;
 export type Screen = (typeof screens)[number];
 
 const esc = (s: string) =>
@@ -12,10 +12,10 @@ const ext = (href: string, label: string) =>
 const heading = (cmd: string, title: string) =>
   `<p class="cmd">C:\\&gt; ${cmd}</p><h2 class="title">${esc(title)}</h2>`;
 
-const bar = (value: number, cells = 20) => {
-  const on = Math.round((value / 100) * cells);
-  return `<span class="meter" aria-hidden="true">${'█'.repeat(on)}<i>${'░'.repeat(cells - on)}</i></span>`;
-};
+const pixels = (rows: string[], cls: string) =>
+  `<svg class="${cls}" viewBox="0 0 ${rows[0].length} ${rows.length}" aria-hidden="true">${rows
+    .flatMap((r, y) => [...r].map((c, x) => (c === '#' ? `<rect x="${x}" y="${y}" width="1" height="1"/>` : '')))
+    .join('')}</svg>`;
 
 const role = (r: Role) => `
   <li class="entry">
@@ -33,7 +33,7 @@ const about = () => `
       <p class="box-title">LANGUAGES</p>
       <ul class="langs">
         ${profile.languages
-          .map((l) => `<li><span class="lang-name">${esc(l.name)}</span>${bar(l.value, 12)}<span class="lang-level">${esc(l.level)}</span></li>`)
+          .map((l) => `<li><span class="lang-name">${esc(l.name)}</span><span class="grade">${esc(l.grade)}</span></li>`)
           .join('')}
       </ul>
     </div>
@@ -48,6 +48,24 @@ const about = () => `
       .join('')}
   </div>`;
 
+const highlights = (p: Project) => p.highlights.map((h) => `+ ${esc(h)}`).join('&nbsp;&nbsp;');
+const stack = (p: Project) => p.stack.map((s) => `<li>${esc(s)}</li>`).join('');
+const links = (p: Project) => `${ext(p.repo, 'Source')}${p.live ? ext(p.live, 'Live demo') : ''}`;
+
+export const projectDetail = (i: number) => {
+  const p = projects[i];
+  return `
+  <div class="project-detail" role="dialog" tabindex="-1" aria-modal="true" aria-label="${esc(p.name)}">
+    <p class="cmd">C:\\PROJECTS&gt; TYPE ${esc(p.file)}</p>
+    <div class="detail-head">${pixels(p.icon, 'detail-icon')}<h2 class="title">${esc(p.name)}</h2></div>
+    ${p.description.map((d) => `<p>${esc(d)}</p>`).join('')}
+    <p class="project-hl">${highlights(p)}</p>
+    <ul class="tags">${stack(p)}</ul>
+    <p class="project-links">${links(p)}</p>
+    <button class="btn" type="button" data-back>[ Back ]</button>
+  </div>`;
+};
+
 const projectsView = () => `
   ${heading('DIR PROJECTS', 'Projects')}
   <p class="muted">${projects.length} file(s) found</p>
@@ -56,11 +74,13 @@ const projectsView = () => `
       .map(
         (p, i) => `
       <li class="project">
-        <p class="project-head"><span class="project-no">${String(i + 1).padStart(2, '0')}</span><span class="project-name">${esc(p.name)}</span><span class="project-file">${esc(p.file)}</span></p>
-        <p>${esc(p.summary)}</p>
-        <p class="project-hl">${p.highlights.map((h) => `+ ${esc(h)}`).join('&nbsp;&nbsp;')}</p>
-        <ul class="tags tags--small">${p.stack.map((s) => `<li>${esc(s)}</li>`).join('')}</ul>
-        <p class="project-links">${ext(p.repo, 'Source')}${p.live ? ext(p.live, 'Live demo') : ''}</p>
+        <button class="project-open" type="button" data-project="${i}">
+          <span class="project-head"><span class="project-no">${String(i + 1).padStart(2, '0')}</span><span class="project-name">${esc(p.name)}</span><span class="project-file">${esc(p.file)}</span></span>
+          <span class="project-summary">${esc(p.summary)}</span>
+        </button>
+        <p class="project-hl">${highlights(p)}</p>
+        <ul class="tags tags--small">${stack(p)}</ul>
+        <p class="project-links">${links(p)}</p>
       </li>`,
       )
       .join('')}
@@ -125,8 +145,8 @@ export const render: Record<Screen, () => string> = {
   about,
   projects: projectsView,
   experience: experienceView,
-  contact: contactView,
   game: gameView,
+  contact: contactView,
 };
 
 export function mailto(name: string, subject: string, message: string) {
