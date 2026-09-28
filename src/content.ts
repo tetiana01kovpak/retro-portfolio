@@ -43,8 +43,9 @@ export const profile = {
     'Multilingual, self-driven, experienced in Agile/Scrum. Currently looking for a Fullstack Developer position.',
   ],
   languages: [
-    { name: 'English', grade: 'C1' },
-    { name: 'German', grade: 'B1' },
+    { name: 'English', grade: 'B2' },
+    { name: 'Italian', grade: 'B1' },
+    { name: 'German', grade: 'A2' },
     { name: 'Ukrainian', grade: 'Native' },
     { name: 'Russian', grade: 'Native' },
   ],

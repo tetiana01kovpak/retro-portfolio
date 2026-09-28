@@ -14,7 +14,7 @@ test('content is complete', () => {
   assert.ok(experience.length > 0 && education.length > 0);
   assert.deepEqual(
     profile.languages.map((l) => [l.name, l.grade]),
-    [['English', 'C1'], ['German', 'B1'], ['Ukrainian', 'Native'], ['Russian', 'Native']],
+    [['English', 'B2'], ['Italian', 'B1'], ['German', 'A2'], ['Ukrainian', 'Native'], ['Russian', 'Native']],
   );
 });
 

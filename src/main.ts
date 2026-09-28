@@ -162,9 +162,9 @@ function open(screen: Screen) {
     pane.focus({ preventScroll: true });
   }
   initial = false;
-  const garden = screen === 'game';
-  path.textContent = `C:\\${garden ? 'GARDEN' : screen.toUpperCase()}`;
-  document.title = `${garden ? 'Habit Garden' : screen[0].toUpperCase() + screen.slice(1)} — ${profile.name}`;
+  const label = screen === 'game' ? 'app' : screen;
+  path.textContent = `C:\\${label.toUpperCase()}`;
+  document.title = `${label[0].toUpperCase()}${label.slice(1)} — ${profile.name}`;
   for (const a of menuLinks) {
     if (a.dataset.screen === screen) a.setAttribute('aria-current', 'page');
     else a.removeAttribute('aria-current');
