@@ -8,7 +8,7 @@ export function unmountGame() { cleanup?.(); cleanup = null; }
 
 const steps: Record<string, number> = { ArrowUp: -1, ArrowLeft: -1, ArrowDown: 1, ArrowRight: 1 };
 
-export function mountGame(root: HTMLElement, _reduced: MediaQueryList) {
+export function mountGame(root: HTMLElement) {
   unmountGame();
   const stage = root.querySelector<HTMLElement>('#garden-stage')!;
   const form = root.querySelector<HTMLFormElement>('#garden-form')!;

@@ -161,15 +161,16 @@ function open(screen: Screen) {
     pane.focus({ preventScroll: true });
   }
   initial = false;
-  path.textContent = `C:\\${screen.toUpperCase()}`;
-  document.title = `${screen[0].toUpperCase()}${screen.slice(1)} — ${profile.name}`;
+  const garden = screen === 'game';
+  path.textContent = `C:\\${garden ? 'GARDEN' : screen.toUpperCase()}`;
+  document.title = `${garden ? 'Habit Garden' : screen[0].toUpperCase() + screen.slice(1)} — ${profile.name}`;
   for (const a of menuLinks) {
     if (a.dataset.screen === screen) a.setAttribute('aria-current', 'page');
     else a.removeAttribute('aria-current');
   }
   blinkDisk();
   if (screen === 'contact') bindForm();
-  if (screen === 'game') mountGame(pane, reduced);
+  if (screen === 'game') mountGame(pane);
 }
 
 function bindForm() {

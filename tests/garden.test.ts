@@ -121,7 +121,7 @@ const mount = () => {
   const root = document.createElement('div');
   root.innerHTML = render.game();
   document.body.replaceChildren(root);
-  mountGame(root, matchMedia('(prefers-reduced-motion: reduce)'));
+  mountGame(root);
   return root;
 };
 

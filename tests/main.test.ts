@@ -74,6 +74,8 @@ test('key 5 opens the garden; plant, mark done, then remove a habit', async () =
   await press('5');
   expect(location.hash).toBe('#game');
   expect(document.querySelector('[aria-current="page"]')?.getAttribute('data-screen')).toBe('game');
+  expect(document.title.startsWith('Habit Garden — ')).toBe(true);
+  expect($('path').textContent).toBe('C:\\GARDEN');
   expect($('garden-list').children.length).toBe(1);
   expect($('garden-detail').textContent).toContain('Old');
   const form = $('garden-form') as HTMLFormElement;
