@@ -11,6 +11,8 @@ test('every screen renders', () => {
 test('game screen has the garden stage, form, list and detail', () => {
   const html = render.game();
   assert.ok(html.includes('Habit Garden'));
+  assert.ok(html.includes('Mark done'));
+  assert.ok(!/invader|score|fire/i.test(html));
   for (const id of ['garden-stage', 'garden-form', 'garden-list', 'garden-detail']) assert.ok(html.includes(`id="${id}"`), id);
   for (const t of ['flower', 'tree', 'cactus', 'mushroom', 'crystal']) assert.ok(html.includes(`value="${t}"`), t);
 });

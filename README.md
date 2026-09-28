@@ -12,9 +12,11 @@ npm run dev        # http://localhost:5173
 Deep links skip the boot animation: `#welcome`, `#about`, `#projects`, `#experience`, `#contact`, `#game`.
 Keys: `1`–`5` or `←`/`→` switch screens, `Esc` goes home, any key skips the boot. The power button on the case reboots.
 
-The Game screen is a small invaders game: `←`/`→` or `A`/`D` move, `Space` fires, `Enter` starts, `P` pauses
-(on-screen buttons on touch devices). The arrow keys play instead of switching screens there; the high score
-is kept in `localStorage`.
+The Habit Garden screen (`#game`) is a small Three.js habit tracker: name a habit and pick a plant (flower, tree,
+cactus, mushroom or crystal), then **Mark done** once a day to make it grow. Select a plant to see today's status,
+the current streak and total completions; **Remove** deletes it. The arrow keys, `Home` and `End` move between
+plants instead of switching screens there. Habits are kept in this browser's `localStorage` only: no account,
+server or sharing. Without WebGL the garden shows a text version with the same controls.
 
 ## Build and check
 
