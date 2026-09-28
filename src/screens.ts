@@ -107,7 +107,7 @@ const gameView = () => `
   <div class="game">
     <p class="cmd">C:\\&gt; RUN GARDEN.EXE</p>
     <h2 class="game-title">Habit Garden</h2>
-    <p class="game-keys">Plant a habit, then <b>Mark done</b> once a day to help it grow. Select a plant to see today, streak and total; <kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd> move between plants.</p>
+    <p class="game-keys">Plant a habit, then Mark done once a day to help it grow. Select a plant to see today, streak and total; <kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd> move between plants.</p>
     <div class="game-stage" id="garden-stage" aria-label="3D habit garden"></div>
     <form class="garden-form" id="garden-form">
       <label>NEW HABIT <input id="garden-name" name="name" maxlength="40" required placeholder="e.g. Read for 10 minutes" /></label>

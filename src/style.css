@@ -997,14 +997,13 @@ kbd {
     grid-template-rows: auto auto auto auto auto 1fr;
     grid-template-areas: 'cmd cmd' 'title title' 'keys keys' 'stage form' 'stage bottom' 'stage status';
     column-gap: 0.6em;
-    height: 100%;
   }
   .game > .cmd { grid-area: cmd; }
   .game-title { grid-area: title; }
   .game-keys { grid-area: keys; }
   .game-stage { grid-area: stage; min-height: 150px; max-height: none; }
   .garden-form { grid-area: form; }
-  .garden-bottom { grid-area: bottom; grid-template-columns: 1fr; min-height: 0; }
+  .garden-bottom { grid-area: bottom; grid-template-columns: 1fr; }
   .garden-list { min-height: 3.6em; }
   .garden-status { grid-area: status; }
 }
