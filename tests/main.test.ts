@@ -17,11 +17,11 @@ const press = async (key: string) => {
 beforeAll(async () => {
   vi.useFakeTimers();
   document.body.innerHTML = readFileSync('index.html', 'utf8').match(/<body>([\s\S]*)<\/body>/)![1];
-  localStorage.setItem('tk-habit-garden', JSON.stringify([
+  localStorage.setItem('tk-habit-garden', JSON.stringify({ version: 1, habits: [
     { id: 'old', name: 'Old', type: 'flower', dates: [] },
     { id: 'bad', name: 'No dates', type: 'tree' },
     { id: 'odd', name: 'Odd', type: 'weed', dates: [] },
-  ]));
+  ] }));
   await import('../src/main.ts');
 });
 

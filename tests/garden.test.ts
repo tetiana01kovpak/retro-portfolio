@@ -70,7 +70,7 @@ test('saved habits reload with the same id, plant type and dates', () => {
 });
 
 test('malformed or unknown saved data reads as unreadable', () => {
-  for (const raw of ['', '{', 'null', '42', '"x"', '{"version":2,"habits":[]}', '{"version":1}']) {
+  for (const raw of ['', '{', 'null', '42', '"x"', '[]', '{"version":2,"habits":[]}', '{"version":1}']) {
     expect(parseGarden(raw)).toBeNull();
   }
 });
@@ -81,7 +81,26 @@ test('unreadable saved data is backed up before the garden can save over it', ()
   expect(loadHabits()).toEqual({ habits: [], writable: true });
   const backups = Object.keys(localStorage).filter((k) => k.startsWith(`${storageKey}-backup-`));
   expect(backups.map((k) => localStorage.getItem(k))).toEqual([raw]);
-  expect(localStorage.getItem(storageKey)).toBeNull();
+  expect(localStorage.getItem(storageKey)).toBe('{"version":1,"habits":[]}');
+});
+
+test('saved data that loses a habit or date when read is backed up once', () => {
+  const walk = { id: 'a', name: 'Walk', type: 'tree', dates: ['2026-02-30'] };
+  const raw = JSON.stringify({ version: 1, habits: [walk, { id: 'b', name: 'Run', type: 'fern', dates: ['2026-09-01'] }] });
+  localStorage.setItem(storageKey, raw);
+  const kept = { ...walk, dates: [] };
+  expect(loadHabits()).toEqual({ habits: [kept], writable: true });
+  expect(loadHabits()).toEqual({ habits: [kept], writable: true });
+  const backups = Object.keys(localStorage).filter((k) => k.startsWith(`${storageKey}-backup-`));
+  expect(backups.map((k) => localStorage.getItem(k))).toEqual([raw]);
+});
+
+test('lossy data that cannot be backed up keeps what it read but blocks saving', () => {
+  const raw = '{"version":1,"habits":[{"id":"a","name":"Walk","type":"tree","dates":[]},{"id":"b"}]}';
+  localStorage.setItem(storageKey, raw);
+  failWrites();
+  expect(loadHabits()).toEqual({ habits: [{ id: 'a', name: 'Walk', type: 'tree', dates: [] }], writable: false });
+  expect(localStorage.getItem(storageKey)).toBe(raw);
 });
 
 test('unreadable data that cannot be backed up blocks saving', () => {
@@ -91,15 +110,15 @@ test('unreadable data that cannot be backed up blocks saving', () => {
   expect(localStorage.getItem(storageKey)).toBe('{');
 });
 
-test('invalid habits, dates and duplicate ids are dropped; the earlier array format still loads', () => {
-  const raw = JSON.stringify([
+test('invalid habits, dates and duplicate ids are dropped', () => {
+  const raw = JSON.stringify({ version: 1, habits: [
     { id: 'a', name: 'Ok', type: 'crystal', dates: ['2026-01-02', '2026-01-01', '2026-01-02', 'nope', '2026-02-30', 7] },
     { id: 'a', name: 'Dup', type: 'crystal', dates: [] },
     { id: 'b', name: 'No dates', type: 'tree' },
     { id: 'c', name: 'Weed', type: 'weed', dates: [] },
     { id: 'd', name: '  ', type: 'tree', dates: [] },
     null,
-  ]);
+  ] });
   expect(parseGarden(raw)).toEqual([{ id: 'a', name: 'Ok', type: 'crystal', dates: ['2026-01-01', '2026-01-02'] }]);
 });
 

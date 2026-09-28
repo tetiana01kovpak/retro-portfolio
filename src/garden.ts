@@ -61,42 +61,48 @@ const toHabit = (value: unknown): Habit | null => {
   return { id: h.id, name: h.name.trim().slice(0, maxName), type: h.type as PlantType, dates };
 };
 
-/** Parses saved garden data, accepting the versioned format and the earlier bare array; returns null when unreadable. */
+/** Parses versioned garden data, dropping invalid habits and dates; returns null when unreadable. */
 export const parseGarden = (raw: string): Habit[] | null => {
   let data: unknown;
   try { data = JSON.parse(raw); } catch { return null; }
-  const list = Array.isArray(data) ? data : (data as Stored | null)?.version === 1 ? (data as Stored).habits : null;
+  const list = (data as Stored | null)?.version === 1 ? (data as Stored).habits : null;
   if (!Array.isArray(list)) return null;
   const seen = new Set<string>();
   return list.map(toHabit).filter((h): h is Habit => !!h && !seen.has(h.id) && !!seen.add(h.id));
 };
+
+const serialize = (habits: Habit[]) => JSON.stringify({ version: 1, habits } satisfies Stored);
 
 const storage = () => {
   try { return globalThis.localStorage ?? null; } catch { return null; }
 };
 
 /**
- * Loads saved habits. Unreadable data is copied to a `tk-habit-garden-backup-<time>` key before the garden may save over it;
+ * Loads saved habits. Data that is unreadable or loses anything when parsed is copied to a `tk-habit-garden-backup-<time>` key
+ * and replaced by what could be read, before the garden may save over it;
  * `writable` is false when storage is unavailable or that backup could not be made.
  */
 export const loadHabits = (store = storage()): { habits: Habit[]; writable: boolean } => {
   if (!store) return { habits: [], writable: false };
+  let habits: Habit[] = [];
   try {
     const raw = store.getItem(storageKey);
-    if (raw === null) return { habits: [], writable: true };
-    const habits = parseGarden(raw);
-    if (habits) return { habits, writable: true };
-    store.setItem(`${storageKey}-backup-${Date.now()}`, raw);
-    store.removeItem(storageKey);
-    return { habits: [], writable: true };
-  } catch { return { habits: [], writable: false }; }
+    if (raw === null) return { habits, writable: true };
+    habits = parseGarden(raw) ?? [];
+    const clean = serialize(habits);
+    if (raw !== clean) {
+      store.setItem(`${storageKey}-backup-${Date.now()}`, raw);
+      store.setItem(storageKey, clean);
+    }
+    return { habits, writable: true };
+  } catch { return { habits, writable: false }; }
 };
 
 /** Saves habits; returns false when the browser refuses storage. */
 export const saveHabits = (habits: Habit[], store = storage()): boolean => {
   if (!store) return false;
   try {
-    store.setItem(storageKey, JSON.stringify({ version: 1, habits } satisfies Stored));
+    store.setItem(storageKey, serialize(habits));
     return true;
   } catch { return false; }
 };
