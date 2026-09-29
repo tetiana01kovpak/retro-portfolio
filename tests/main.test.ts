@@ -13,20 +13,15 @@ const press = async (key: string) => {
   dispatchEvent(new KeyboardEvent('keydown', { key }));
   await settle();
 };
-let frames = 0;
-const pending = new Map<number, FrameRequestCallback>();
-const nextFrame = (t: number) => {
-  const [[id, cb]] = pending;
-  pending.delete(id);
-  cb(t);
-};
 
 beforeAll(async () => {
   vi.useFakeTimers();
-  vi.stubGlobal('requestAnimationFrame', (cb: FrameRequestCallback) => (pending.set(++frames, cb), frames));
-  vi.stubGlobal('cancelAnimationFrame', (id: number) => pending.delete(id));
   document.body.innerHTML = readFileSync('index.html', 'utf8').match(/<body>([\s\S]*)<\/body>/)![1];
-  localStorage.setItem('tk-invaders-hi', '7');
+  localStorage.setItem('tk-habit-garden', JSON.stringify({ version: 1, habits: [
+    { id: 'old', name: 'Old', type: 'flower', dates: [] },
+    { id: 'bad', name: 'No dates', type: 'tree' },
+    { id: 'odd', name: 'Odd', type: 'weed', dates: [] },
+  ] }));
   await import('../src/main.ts');
 });
 
@@ -73,79 +68,42 @@ test('navigating right after pressing power cancels the pending reboot', async (
   expect(visible()).toEqual(['view-welcome']);
 });
 
-test('key 5 opens the game; arrows play instead of switching screens', async () => {
+test('key 5 opens the garden; plant, mark done, then remove a habit', async () => {
   $('btn-click').click();
   await settle();
   await press('5');
   expect(location.hash).toBe('#game');
-  expect(visible()).toEqual(['shell']);
   expect(document.querySelector('[aria-current="page"]')?.getAttribute('data-screen')).toBe('game');
-  expect(pending.size).toBe(0);
-  await press('Enter');
-  expect(pending.size).toBe(1);
-  expect($('game-hi').textContent).toBe('0007');
-  vi.spyOn(Math, 'random').mockReturnValue(0.99);
-  dispatchEvent(new KeyboardEvent('keydown', { key: ' ' }));
-  for (let t = 16; t < 5000 && $('game-score').textContent === '0000'; t += 16) nextFrame(t);
-  dispatchEvent(new KeyboardEvent('keyup', { key: ' ' }));
-  vi.mocked(Math.random).mockRestore();
-  const score = $('game-score').textContent;
-  expect(Number(score)).toBeGreaterThan(7);
-  expect($('game-hi').textContent).toBe(score);
-  expect(localStorage.getItem('tk-invaders-hi')).toBe(String(Number(score)));
-  const right = new KeyboardEvent('keydown', { key: 'ArrowRight', cancelable: true });
-  dispatchEvent(right);
+  expect(document.title.startsWith('Habit Garden — ')).toBe(true);
+  expect($('path').textContent).toBe('C:\\GARDEN');
+  expect($('garden-list').children.length).toBe(1);
+  expect($('garden-detail').textContent).toContain('Old');
+  const form = $('garden-form') as HTMLFormElement;
+  ($('garden-name') as HTMLInputElement).value = 'Read';
+  form.querySelector('select')!.value = 'tree';
+  form.dispatchEvent(new Event('submit', { cancelable: true }));
+  expect($('garden-list').children.length).toBe(2);
+  expect($('garden-detail').textContent).toContain('TREE · Today: not yet · Streak: 0 · Total: 0');
+  const button = (text: string) => [...$('garden-detail').querySelectorAll('button')].find((b) => b.textContent!.includes(text))!;
+  button('Mark done').click();
+  expect($('garden-detail').textContent).toContain('Today: done · Streak: 1 · Total: 1');
+  expect(button('Done today').disabled).toBe(true);
+  expect($('garden-list').textContent).toContain('✓ Read');
+  const stored = JSON.parse(localStorage.getItem('tk-habit-garden')!).habits;
+  expect(stored.map((h: { name: string }) => h.name)).toEqual(['Old', 'Read']);
+  expect(stored[1].dates).toHaveLength(1);
+  button('Remove').click();
+  expect($('garden-list').children.length).toBe(1);
+  expect(JSON.parse(localStorage.getItem('tk-habit-garden')!).habits.map((h: { name: string }) => h.name)).toEqual(['Old']);
+});
+
+test('digits typed in the garden form stay on the garden', async () => {
+  const select = document.querySelector<HTMLSelectElement>('#garden-form select')!;
+  select.dispatchEvent(new KeyboardEvent('keydown', { key: '3', bubbles: true }));
   await settle();
-  expect(right.defaultPrevented).toBe(true);
   expect(location.hash).toBe('#game');
-  await press('ArrowLeft');
+  await press('ArrowRight');
   expect(location.hash).toBe('#game');
-  expect(pending.size).toBe(1);
-});
-
-test('hiding the tab pauses the loop; P resumes it', async () => {
-  Object.defineProperty(document, 'hidden', { configurable: true, value: true });
-  document.dispatchEvent(new Event('visibilitychange'));
-  expect(pending.size).toBe(0);
-  Object.defineProperty(document, 'hidden', { configurable: true, value: false });
-  document.dispatchEvent(new Event('visibilitychange'));
-  expect(pending.size).toBe(0);
-  await press('p');
-  expect(pending.size).toBe(1);
-});
-
-test('digits leave the game and cancel the loop; Esc goes home from it', async () => {
   await press('3');
   expect(location.hash).toBe('#experience');
-  expect(pending.size).toBe(0);
-  await press('5');
-  expect(location.hash).toBe('#game');
-  expect(pending.size).toBe(0);
-  await press('p');
-  expect(pending.size).toBe(1);
-  await press('Escape');
-  expect(visible()).toEqual(['view-welcome']);
-  expect(pending.size).toBe(0);
-});
-
-test('touch buttons: START toggles the loop, holding FIRE shoots', async () => {
-  $('btn-click').click();
-  await settle();
-  await press('5');
-  expect(location.hash).toBe('#game');
-  const tap = (sel: string, type: string) =>
-    document.querySelector(sel)!.dispatchEvent(new PointerEvent(type, { bubbles: true }));
-  const score = Number($('game-score').textContent);
-  expect(pending.size).toBe(0);
-  tap('[data-tap="start"]', 'pointerdown');
-  expect(pending.size).toBe(1);
-  tap('[data-tap="start"]', 'pointerdown');
-  expect(pending.size).toBe(0);
-  tap('[data-tap="start"]', 'pointerdown');
-  vi.spyOn(Math, 'random').mockReturnValue(0.99);
-  tap('[data-hold="fire"]', 'pointerdown');
-  for (let t = 16; t < 5000 && Number($('game-score').textContent) === score; t += 16) nextFrame(t);
-  tap('[data-hold="fire"]', 'pointerup');
-  vi.mocked(Math.random).mockRestore();
-  expect(Number($('game-score').textContent)).toBeGreaterThan(score);
 });
