@@ -37,8 +37,15 @@
               <section class="view view--welcome" id="view-welcome" hidden>
                 <div class="welcome">
                   <p class="prompt-line">C:\&gt; RUN PORTFOLIO</p>
-                  <h1 class="welcome-title"><span id="type-welcome"></span></h1>
-                  <p class="welcome-sub"><span id="type-tagline"></span><span class="cursor" aria-hidden="true"></span></p>
+                  <div class="welcome-loading">
+                    <span>LOADING...</span>
+                    <span class="bar"><span class="bar-fill" id="welcome-bar"></span></span>
+                  </div>
+                  <p class="welcome-title welcome-hello" id="type-welcome"></p>
+                  <div class="welcome-intro">
+                    <p class="welcome-sub"><span id="type-tagline"></span></p>
+                    <h1 class="welcome-title"><span id="type-name"></span><span class="cursor" aria-hidden="true"></span></h1>
+                  </div>
                   <button class="btn btn--click" id="btn-click" type="button">[ Click ]</button>
                   <p class="hint">or press ENTER</p>
                 </div>
@@ -54,12 +61,13 @@
                   <a href="#about" data-screen="about"><kbd>1</kbd>About</a>
                   <a href="#projects" data-screen="projects"><kbd>2</kbd>Projects</a>
                   <a href="#experience" data-screen="experience"><kbd>3</kbd>Experience</a>
-                  <a href="#contact" data-screen="contact"><kbd>4</kbd>Contact</a>
-                  <a href="#game" data-screen="game"><kbd>5</kbd>Habit Garden</a>
+                  <a href="#game" data-screen="game"><kbd>4</kbd>App</a>
+                  <a href="#contact" data-screen="contact"><kbd>5</kbd>Contact</a>
                 </nav>
                 <div class="pane" id="pane" tabindex="0" role="region"></div>
                 <footer class="footbar">
                   <span><kbd>1</kbd>-<kbd>5</kbd> / <kbd>←</kbd><kbd>→</kbd> switch</span>
+                  <button class="btn btn--next" id="btn-next" type="button">[ Next ]</button>
                   <span><kbd>ESC</kbd> home</span>
                 </footer>
               </div>

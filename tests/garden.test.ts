@@ -3,7 +3,7 @@ import {
   complete, createHabit, type Habit, isDone, loadHabits, localDate, parseGarden, saveHabits, storageKey, streak, total,
 } from '../src/garden.ts';
 import { mountGame, unmountGame } from '../src/gameview.ts';
-import { render } from '../src/screens.ts';
+import { appView } from '../src/screens.ts';
 
 const habit = (dates: string[] = [], type: Habit['type'] = 'cactus'): Habit => ({ id: 'h1', name: 'Walk', type, dates });
 
@@ -137,7 +137,7 @@ const button = (root: HTMLElement, text: string) =>
 
 const mount = () => {
   const root = document.createElement('div');
-  root.innerHTML = render.game();
+  root.innerHTML = appView('garden');
   document.body.replaceChildren(root);
   mountGame(root);
   return root;

@@ -9,6 +9,8 @@ export interface Project {
   name: string;
   file: string;
   summary: string;
+  description: string[];
+  icon: string[];
   highlights: string[];
   stack: string[];
   repo: string;
@@ -22,6 +24,13 @@ export interface Role {
   points: string[];
 }
 
+export interface App {
+  id: string;
+  name: string;
+  file: string;
+  summary: string;
+}
+
 export interface Certificate {
   name: string;
   issuer: string;
@@ -33,23 +42,18 @@ export const profile = {
   name: 'Tetiana Kovpak',
   role: 'Junior Fullstack Developer',
   welcome: 'Welcome to my portfolio',
-  tagline: 'Full stack developer',
+  tagline: 'Fullstack developer',
   bio: [
     'Junior Fullstack Developer who combines strong technical skills with hands-on business experience.',
     'I build polished, responsive web applications with React and Node.js, with a rare edge in 3D web experiences using Three.js and Blender.',
     'I have managed my own e-commerce business and delivered commercial 3D work for clients, so I understand not just the code but the product and the customer behind it.',
     'Multilingual, self-driven, experienced in Agile/Scrum. Currently looking for a Fullstack Developer position.',
   ],
-  languages: [
-    { name: 'Ukrainian', level: 'Native', value: 100 },
-    { name: 'Russian', level: 'Native', value: 100 },
-    { name: 'English', level: 'Advanced', value: 80 },
-    { name: 'German', level: 'Intermediate', value: 55 },
-  ],
 };
 
 export const skills: { group: string; items: string[] }[] = [
   { group: 'Frontend', items: ['React', 'Next.js', 'Angular', 'TypeScript', 'JavaScript (ES6+)', 'HTML5', 'CSS3', 'SASS'] },
+  { group: 'Design', items: ['UX Design', 'Figma', 'Adobe Premiere', 'Adobe Photoshop', 'Adobe Illustrator'] },
   { group: '3D & Visual', items: ['Three.js', 'WebGL', 'Blender'] },
   { group: 'Backend', items: ['Node.js', 'REST API', 'Docker'] },
   { group: 'Databases', items: ['PostgreSQL', 'MongoDB'] },
@@ -59,17 +63,45 @@ export const skills: { group: string; items: string[] }[] = [
 
 export const projects: Project[] = [
   {
-    name: 'Habbit Garden',
-    file: 'HABBIT.3D',
-    summary: 'Interactive 3D habit tracker: each habit grows as a procedurally generated plant in a WebGL garden.',
-    highlights: ['Five plant types', 'Dynamic lighting', 'Raycasting', 'Streak feedback', 'CI/CD via GitHub Actions'],
-    stack: ['Three.js', 'JavaScript', 'Vite'],
-    repo: 'https://github.com/tetiana01kovpak/habbit-garden',
+    name: 'ePharmacy',
+    file: 'EPHARM.TSX',
+    summary: 'Full-stack pharmacy store: browse medicine, find nearby pharmacies, manage a cart and check out.',
+    description: [
+      'A full-stack pharmacy e-commerce app built from a Figma design and functional specification.',
+      'Guests browse the home page, the store directory and product pages. Signing in unlocks the medicine catalog with search, category filter and pagination, plus the cart and checkout flow.',
+      'Adding to cart as a guest opens an inline login modal; once signed in, the item is added and the visitor continues where they left off.',
+      'The Express REST API uses MongoDB with JWT access/refresh auth, bcrypt-hashed passwords, an httpOnly refresh cookie and Yup request validation.',
+    ],
+    icon: ['..####..', '..#..#..', '###..###', '#......#', '#......#', '###..###', '..#..#..', '..####..'],
+    highlights: ['Search & filter', 'Pagination', 'Cart & checkout', 'JWT auth', 'REST API'],
+    stack: ['React 19', 'TypeScript', 'Redux Toolkit', 'Express', 'MongoDB', 'JWT'],
+    repo: 'https://github.com/tetiana01kovpak/epharmacy_client',
+    live: 'https://e-pharmacy-client-j837.onrender.com/',
+  },
+  {
+    name: 'TravelTrucks',
+    file: 'TRUCKS.TSX',
+    summary: 'Camper rental app: browse, filter and book campers with a gallery, reviews and a booking form.',
+    description: [
+      'A web app for browsing and booking camper rentals, built with the Next.js App Router and TypeScript on a public campers API.',
+      'The catalog filters on the backend by location, vehicle type, engine and transmission, keeps filters in the URL and loads more results with TanStack Query infinite queries.',
+      'Each camper page shows a Swiper thumbnail gallery, specs, amenities and user reviews, with a validated booking form and toast notifications.',
+    ],
+    icon: ['........', '######..', '#.#.####', '#.#.#..#', '########', '########', '.##..##.', '........'],
+    highlights: ['URL-driven filters', 'Infinite loading', 'Image gallery', 'Booking form', 'Reviews'],
+    stack: ['Next.js 15', 'TypeScript', 'TanStack Query', 'React Hook Form', 'Yup', 'Swiper'],
+    repo: 'https://github.com/tetiana01kovpak/TravelTrucks',
+    live: 'https://travel-trucks-five-self.vercel.app/',
   },
   {
     name: 'Quantum JS',
     file: 'QUANTUM.EXE',
     summary: 'E-commerce furniture store SPA with catalog, ordering and reviews. Agile team project.',
+    description: [
+      'An e-commerce furniture store SPA with a product catalog, ordering and customer reviews.',
+      'Built in an Agile team: filtering and pagination over a REST API, modal order forms and a Swiper reviews slider, all responsive.',
+    ],
+    icon: ['........', '.######.', '.#....#.', '.#....#.', '########', '#......#', '########', '.#....#.'],
     highlights: ['Filtering', 'Pagination', 'Modals', 'REST API', 'Responsive'],
     stack: ['JavaScript', 'Vite', 'Axios', 'Swiper'],
     repo: 'https://github.com/tetiana01kovpak/QuantumJS',
@@ -79,6 +111,11 @@ export const projects: Project[] = [
     name: 'FlowBloom',
     file: 'FLOWBLM.HTM',
     summary: 'Responsive, mobile-first landing page for a yoga studio.',
+    description: [
+      'A responsive, mobile-first landing page for a yoga studio.',
+      'Hand-written HTML and CSS with a layout that scales from phones up to wide desktop screens.',
+    ],
+    icon: ['...##...', '..####..', '#..##..#', '##.##.##', '.######.', '..####..', '...##...', '.######.'],
     highlights: ['Mobile-first', 'Responsive layout'],
     stack: ['HTML', 'CSS'],
     repo: 'https://github.com/tetiana01kovpak/FlowBloom',
@@ -88,6 +125,11 @@ export const projects: Project[] = [
     name: 'NoteHub',
     file: 'NOTEHUB.SYS',
     summary: 'Full-stack notes app: create, edit, delete and filter notes with persistent storage.',
+    description: [
+      'A full-stack notes app: create, edit, delete and filter notes.',
+      'A Node.js REST API keeps notes in persistent storage and is deployed on Render.',
+    ],
+    icon: ['######..', '#....##.', '#.##..#.', '#.....#.', '#.###.#.', '#.....#.', '#.###.#.', '#######.'],
     highlights: ['CRUD', 'Filtering', 'Persistent storage', 'Deployed on Render'],
     stack: ['Node.js', 'REST API'],
     repo: 'https://github.com/tetiana01kovpak/nodejs-hw',
@@ -97,6 +139,11 @@ export const projects: Project[] = [
     name: 'ChillScape',
     file: 'CHILLSCP.TSX',
     summary: 'Web app for discovering travel locations: browse, filter, log in and leave reviews.',
+    description: [
+      'A web app for discovering travel locations.',
+      'Visitors browse and filter places, log in and leave reviews. Built with React and TypeScript.',
+    ],
+    icon: ['......#.', '.....###', '..#...#.', '.###....', '#####.#.', '######.#', '########', '........'],
     highlights: ['Browse & filter', 'Authentication', 'Reviews'],
     stack: ['TypeScript', 'React'],
     repo: 'https://github.com/tetiana01kovpak/chillscape-frontend',
@@ -110,7 +157,7 @@ export const experience: Role[] = [
     where: 'Independent & team projects',
     dates: '2024 – Present',
     points: [
-      'Built full-stack and 3D web projects (Habbit Garden, Quantum JS, NoteHub, FlowBloom) with React, Node.js, Three.js and REST APIs.',
+      'Built full-stack web projects (ePharmacy, TravelTrucks, Quantum JS, NoteHub) with React, Next.js, Node.js and REST APIs.',
       'Collaborated on Quantum JS in an Agile/Scrum team: sprints, code review, Git workflows.',
     ],
   },
@@ -118,14 +165,6 @@ export const experience: Role[] = [
     title: 'Freelance 3D & Web Developer',
     where: 'Self-employed, client work',
     points: ['Created commercial 3D assets and scenes in Blender and brought them into interactive Three.js web scenes.'],
-  },
-  {
-    title: 'E-commerce Business Owner',
-    where: 'Self-employed',
-    points: [
-      'Ran an online store end to end: listings, pricing, customer service and fulfillment.',
-      'That experience shapes how I think about UX and the customer behind the product.',
-    ],
   },
 ];
 
@@ -138,6 +177,15 @@ export const education: Role[] = [
 ];
 
 // Add certificates here, e.g. { name: 'Fullstack Developer', issuer: 'GoIT', date: '2025', url: 'https://...' }
+export const apps: App[] = [
+  {
+    id: 'garden',
+    name: 'Habbit Garden',
+    file: 'GARDEN.EXE',
+    summary: 'Plant a habit, mark it done once a day and watch it grow in a 3D garden.',
+  },
+];
+
 export const certificates: Certificate[] = [];
 
 export const contact = {

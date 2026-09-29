@@ -16,6 +16,7 @@ const open = async (saved = habits) => {
   await tick();
   location.hash = '#game';
   await tick();
+  $('pane').querySelector<HTMLElement>('[data-app="garden"]')!.click();
 };
 const key = async (target: Element, k: string) => {
   target.dispatchEvent(new KeyboardEvent('keydown', { key: k, bubbles: true, cancelable: true }));
@@ -113,7 +114,7 @@ test('text-garden plants are focusable buttons that arrow keys walk through', as
   expect($('garden-detail').querySelector('strong')!.textContent).toBe('Read');
 });
 
-test('garden keys stay on the garden while digits and Escape keep their portfolio meaning', async () => {
+test('garden keys stay on the garden; digits keep their portfolio meaning and Escape returns to the launcher, then home', async () => {
   await open();
   for (const k of ['ArrowRight', 'ArrowLeft', 'ArrowDown', 'Enter', ' ', 'Home', 'End']) {
     await key(active() === document.body ? items()[0] : active(), k);
@@ -127,6 +128,9 @@ test('garden keys stay on the garden while digits and Escape keep their portfoli
   expect(location.hash).toBe('#experience');
   await open();
   await key(items()[0], 'Escape');
+  expect(location.hash).toBe('#game');
+  expect(document.getElementById('garden-stage')).toBeNull();
+  await key(document.body, 'Escape');
   expect(location.hash).not.toBe('#game');
   expect($('shell').hidden).toBe(true);
 });

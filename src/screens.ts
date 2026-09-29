@@ -1,6 +1,8 @@
-import { certificates, contact, education, experience, profile, projects, skills, type Role } from './content.ts';
+import photo from './assets/tetiana.png';
+import { icon, pixels } from './icons.ts';
+import { apps, certificates, contact, education, experience, profile, projects, skills, type Project, type Role } from './content.ts';
 
-export const screens = ['about', 'projects', 'experience', 'contact', 'game'] as const;
+export const screens = ['about', 'projects', 'experience', 'game', 'contact'] as const;
 export type Screen = (typeof screens)[number];
 
 const esc = (s: string) =>
@@ -11,11 +13,6 @@ const ext = (href: string, label: string) =>
 
 const heading = (cmd: string, title: string) =>
   `<p class="cmd">C:\\&gt; ${cmd}</p><h2 class="title">${esc(title)}</h2>`;
-
-const bar = (value: number, cells = 20) => {
-  const on = Math.round((value / 100) * cells);
-  return `<span class="meter" aria-hidden="true">${'█'.repeat(on)}<i>${'░'.repeat(cells - on)}</i></span>`;
-};
 
 const role = (r: Role) => `
   <li class="entry">
@@ -29,24 +26,38 @@ const about = () => `
   <p class="role">&gt; ${esc(profile.role)}</p>
   <div class="about-grid">
     <div class="about-bio">${profile.bio.map((p) => `<p>${esc(p)}</p>`).join('')}</div>
-    <div class="box">
-      <p class="box-title">LANGUAGES</p>
-      <ul class="langs">
-        ${profile.languages
-          .map((l) => `<li><span class="lang-name">${esc(l.name)}</span>${bar(l.value, 12)}<span class="lang-level">${esc(l.level)}</span></li>`)
-          .join('')}
-      </ul>
-    </div>
+    <figure class="photo">
+      <p class="photo-bar"><span>PHOTO.BMP</span><span aria-hidden="true">[_][x]</span></p>
+      <div class="photo-screen"><img src="${photo}" width="132" height="176" alt="${esc(profile.name)}" /></div>
+    </figure>
   </div>
   <h3 class="sub">SKILLS.DAT</h3>
   <div class="skills">
     ${skills
       .map(
         (g) => `<div class="skill-group"><p class="skill-name">${esc(g.group)}</p>
-          <ul class="tags">${g.items.map((i) => `<li>${esc(i)}</li>`).join('')}</ul></div>`,
+          <ul class="tags">${g.items.map((i) => `<li>${icon(i)}${esc(i)}</li>`).join('')}</ul></div>`,
       )
       .join('')}
   </div>`;
+
+const highlights = (p: Project) => p.highlights.map((h) => `+ ${esc(h)}`).join('&nbsp;&nbsp;');
+const stack = (p: Project) => p.stack.map((s) => `<li>${esc(s)}</li>`).join('');
+const links = (p: Project) => `${ext(p.repo, 'Source')}${p.live ? ext(p.live, 'Live demo') : ''}`;
+
+export const projectDetail = (i: number) => {
+  const p = projects[i];
+  return `
+  <div class="project-detail" data-for="${i}" role="dialog" tabindex="-1" aria-modal="true" aria-label="${esc(p.name)}">
+    <p class="cmd">C:\\PROJECTS&gt; TYPE ${esc(p.file)}</p>
+    <div class="detail-head">${pixels(p.icon, 'detail-icon')}<h2 class="title">${esc(p.name)}</h2></div>
+    ${p.description.map((d) => `<p>${esc(d)}</p>`).join('')}
+    <p class="project-hl">${highlights(p)}</p>
+    <ul class="tags">${stack(p)}</ul>
+    <p class="project-links">${links(p)}</p>
+    <button class="btn" type="button" data-back>[ Back ]</button>
+  </div>`;
+};
 
 const projectsView = () => `
   ${heading('DIR PROJECTS', 'Projects')}
@@ -56,11 +67,13 @@ const projectsView = () => `
       .map(
         (p, i) => `
       <li class="project">
-        <p class="project-head"><span class="project-no">${String(i + 1).padStart(2, '0')}</span><span class="project-name">${esc(p.name)}</span><span class="project-file">${esc(p.file)}</span></p>
-        <p>${esc(p.summary)}</p>
-        <p class="project-hl">${p.highlights.map((h) => `+ ${esc(h)}`).join('&nbsp;&nbsp;')}</p>
-        <ul class="tags tags--small">${p.stack.map((s) => `<li>${esc(s)}</li>`).join('')}</ul>
-        <p class="project-links">${ext(p.repo, 'Source')}${p.live ? ext(p.live, 'Live demo') : ''}</p>
+        <button class="project-open" type="button" data-project="${i}">
+          <span class="project-head"><span class="project-no">${String(i + 1).padStart(2, '0')}</span><span class="project-name">${esc(p.name)}</span><span class="project-file">${esc(p.file)}</span></span>
+          <span class="project-summary">${esc(p.summary)}</span>
+        </button>
+        <p class="project-hl">${highlights(p)}</p>
+        <ul class="tags tags--small">${stack(p)}</ul>
+        <p class="project-links">${links(p)}</p>
       </li>`,
       )
       .join('')}
@@ -103,7 +116,7 @@ const contactView = () => `
     <button class="btn" type="submit">[ Send ]</button>
   </form>`;
 
-const gameView = () => `
+const gardenView = () => `
   <div class="game">
     <p class="cmd">C:\\&gt; RUN GARDEN.EXE</p>
     <h2 class="game-title">Habit Garden</h2>
@@ -121,12 +134,34 @@ const gameView = () => `
     <p class="garden-status" id="garden-status" role="status"></p>
   </div>`;
 
+const appsView = () => `
+  ${heading('DIR APPS', 'Apps')}
+  <p class="muted">${apps.length} program(s) found</p>
+  <ol class="projects">
+    ${apps
+      .map(
+        (a) => `
+      <li class="project">
+        <button class="project-open" type="button" data-app="${esc(a.id)}">
+          <span class="project-head"><span class="project-name">${esc(a.name)}</span><span class="project-file">${esc(a.file)}</span></span>
+          <span class="project-summary">${esc(a.summary)}</span>
+        </button>
+      </li>`,
+      )
+      .join('')}
+  </ol>`;
+
+const appViews: Record<string, () => string> = { garden: gardenView };
+
+export const appView = (id: string) =>
+  `<button class="btn app-back" type="button" data-apps>[ Back ]</button>${appViews[id]()}`;
+
 export const render: Record<Screen, () => string> = {
   about,
   projects: projectsView,
   experience: experienceView,
+  game: appsView,
   contact: contactView,
-  game: gameView,
 };
 
 export function mailto(name: string, subject: string, message: string) {

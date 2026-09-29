@@ -1,18 +1,19 @@
 import { test } from 'vitest';
 import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
-import { certificates, contact, education, experience, profile, projects, skills } from '../src/content.ts';
+import { apps, certificates, contact, education, experience, profile, projects, skills } from '../src/content.ts';
 
 test('welcome copy is spelled right', () => {
   assert.equal(profile.welcome, 'Welcome to my portfolio');
-  assert.equal(profile.tagline, 'Full stack developer');
+  assert.equal(profile.tagline, 'Fullstack developer');
 });
 
 test('content is complete', () => {
-  assert.equal(projects.length, 5);
+  assert.equal(projects.length, 6);
   assert.ok(skills.length > 0 && skills.every((g) => g.items.length > 0));
   assert.ok(experience.length > 0 && education.length > 0);
-  assert.ok(profile.languages.every((l) => l.value > 0 && l.value <= 100));
+  assert.ok(!('languages' in profile));
+  assert.deepEqual(apps.map((a) => [a.id, a.name]), [['garden', 'Habbit Garden']]);
 });
 
 test('every link is absolute https or mailto', () => {
