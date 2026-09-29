@@ -2,7 +2,7 @@ import { test } from 'vitest';
 import assert from 'node:assert/strict';
 import { contact, projects, skills } from '../src/content.ts';
 import { skillIcons } from '../src/icons.ts';
-import { mailto, render, screens } from '../src/screens.ts';
+import { appView, mailto, render, screens } from '../src/screens.ts';
 
 test('every screen renders', () => {
   assert.deepEqual(screens, ['about', 'projects', 'experience', 'game', 'contact']);
@@ -22,8 +22,22 @@ test('every skill has its own pixel icon', () => {
   assert.equal(render.about().match(/class="skill-icon"/g)?.length, count);
 });
 
-test('game screen has the garden stage, form, list and detail', () => {
+test('about shows the retro photo instead of the languages box', () => {
+  const html = render.about();
+  assert.ok(!html.includes('LANGUAGES'));
+  assert.match(html, /<figure class="photo">[\s\S]*<img src="[^"]+tetiana\.png" [^>]*alt="Tetiana Kovpak"/);
+});
+
+test('the App screen lists one launcher entry, Habbit Garden', () => {
   const html = render.game();
+  assert.equal(html.match(/data-app="/g)?.length, 1);
+  assert.ok(html.includes('data-app="garden"') && html.includes('Habbit Garden'));
+  assert.ok(!html.includes('garden-stage'));
+});
+
+test('the garden app has the stage, form, list and detail', () => {
+  const html = appView('garden');
+  assert.ok(html.includes('data-apps'));
   assert.ok(html.includes('Habit Garden'));
   assert.ok(html.includes('Mark done'));
   assert.ok(!/invader|score|fire/i.test(html));

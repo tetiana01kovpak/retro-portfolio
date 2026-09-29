@@ -1,5 +1,6 @@
+import photo from './assets/tetiana.png';
 import { icon, pixels } from './icons.ts';
-import { certificates, contact, education, experience, profile, projects, skills, type Project, type Role } from './content.ts';
+import { apps, certificates, contact, education, experience, profile, projects, skills, type Project, type Role } from './content.ts';
 
 export const screens = ['about', 'projects', 'experience', 'game', 'contact'] as const;
 export type Screen = (typeof screens)[number];
@@ -25,14 +26,10 @@ const about = () => `
   <p class="role">&gt; ${esc(profile.role)}</p>
   <div class="about-grid">
     <div class="about-bio">${profile.bio.map((p) => `<p>${esc(p)}</p>`).join('')}</div>
-    <div class="box">
-      <p class="box-title">LANGUAGES</p>
-      <ul class="langs">
-        ${profile.languages
-          .map((l) => `<li><span class="lang-name">${esc(l.name)}</span><span class="grade">${esc(l.grade)}</span></li>`)
-          .join('')}
-      </ul>
-    </div>
+    <figure class="photo">
+      <p class="photo-bar"><span>PHOTO.BMP</span><span aria-hidden="true">[_][x]</span></p>
+      <div class="photo-screen"><img src="${photo}" width="132" height="176" alt="${esc(profile.name)}" /></div>
+    </figure>
   </div>
   <h3 class="sub">SKILLS.DAT</h3>
   <div class="skills">
@@ -119,7 +116,7 @@ const contactView = () => `
     <button class="btn" type="submit">[ Send ]</button>
   </form>`;
 
-const gameView = () => `
+const gardenView = () => `
   <div class="game">
     <p class="cmd">C:\\&gt; RUN GARDEN.EXE</p>
     <h2 class="game-title">Habit Garden</h2>
@@ -137,11 +134,33 @@ const gameView = () => `
     <p class="garden-status" id="garden-status" role="status"></p>
   </div>`;
 
+const appsView = () => `
+  ${heading('DIR APPS', 'Apps')}
+  <p class="muted">${apps.length} program(s) found</p>
+  <ol class="projects">
+    ${apps
+      .map(
+        (a) => `
+      <li class="project">
+        <button class="project-open" type="button" data-app="${esc(a.id)}">
+          <span class="project-head"><span class="project-name">${esc(a.name)}</span><span class="project-file">${esc(a.file)}</span></span>
+          <span class="project-summary">${esc(a.summary)}</span>
+        </button>
+      </li>`,
+      )
+      .join('')}
+  </ol>`;
+
+const appViews: Record<string, () => string> = { garden: gardenView };
+
+export const appView = (id: string) =>
+  `<button class="btn app-back" type="button" data-apps>[ Back ]</button>${appViews[id]()}`;
+
 export const render: Record<Screen, () => string> = {
   about,
   projects: projectsView,
   experience: experienceView,
-  game: gameView,
+  game: appsView,
   contact: contactView,
 };
 

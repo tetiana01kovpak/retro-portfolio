@@ -2,7 +2,7 @@ import '@fontsource/vt323/latin-400.css';
 import './style.css';
 import { profile } from './content.ts';
 import { mountGame, unmountGame } from './gameview.ts';
-import { mailto, projectDetail, render, screens, type Screen } from './screens.ts';
+import { appView, mailto, projectDetail, render, screens, type Screen } from './screens.ts';
 
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
 
@@ -16,6 +16,8 @@ const bootPct = $('boot-pct');
 const welcomeView = $('view-welcome');
 const typeWelcome = $('type-welcome');
 const typeTagline = $('type-tagline');
+const typeName = $('type-name');
+const welcomeBar = $('welcome-bar');
 const clickBtn = $<HTMLButtonElement>('btn-click');
 const shell = $('shell');
 const pane = $('pane');
@@ -63,6 +65,7 @@ const bootLines: [string, number][] = [
 
 function show(view: 'boot' | 'welcome' | 'shell') {
   unmountGame();
+  openApp = null;
   bootView.hidden = view !== 'boot';
   welcomeView.hidden = view !== 'welcome';
   shell.hidden = view !== 'shell';
@@ -114,6 +117,14 @@ async function boot() {
   }
 }
 
+function introDone() {
+  welcomeView.dataset.stage = 'intro';
+  typeTagline.textContent = profile.tagline;
+  typeName.textContent = profile.name;
+  welcomeView.classList.add('typed');
+  clickBtn.focus({ preventScroll: true });
+}
+
 async function welcome(animate: boolean) {
   const id = ++run;
   current = 'welcome';
@@ -121,24 +132,26 @@ async function welcome(animate: boolean) {
   crt.classList.add('on');
   show('welcome');
   document.title = `${profile.name} — ${profile.tagline}`;
-  welcomeView.classList.toggle('typed', !animate);
-  typeWelcome.parentElement!.setAttribute('aria-label', profile.welcome);
-  if (!animate || reduced.matches) {
-    typeWelcome.textContent = profile.welcome;
-    typeTagline.textContent = profile.tagline;
-    welcomeView.classList.add('typed');
-    clickBtn.focus({ preventScroll: true });
-    return;
-  }
-  typeWelcome.textContent = typeTagline.textContent = '';
+  welcomeView.classList.remove('typed');
+  if (!animate || reduced.matches) return introDone();
+  typeWelcome.textContent = typeTagline.textContent = typeName.textContent = '';
+  welcomeView.dataset.stage = 'loading';
   try {
-    await wait(350, id);
+    for (let p = 0; p <= 100; p += 4) {
+      welcomeBar.style.width = `${p}%`;
+      await wait(40, id);
+    }
+    await wait(250, id);
+    welcomeView.dataset.stage = 'hello';
     await type(typeWelcome, profile.welcome, id);
+    await wait(1100, id);
+    welcomeView.dataset.stage = 'intro';
     await wait(300, id);
     await type(typeTagline, profile.tagline, id, 45);
+    await wait(200, id);
+    await type(typeName, profile.name, id);
     await wait(250, id);
-    welcomeView.classList.add('typed');
-    clickBtn.focus({ preventScroll: true });
+    introDone();
   } catch (e) {
     if (!(e instanceof Skipped)) throw e;
   }
@@ -171,7 +184,27 @@ function open(screen: Screen) {
   }
   blinkDisk();
   if (screen === 'contact') bindForm();
-  if (screen === 'game') mountGame(pane);
+}
+
+const mounts: Record<string, (root: HTMLElement) => void> = { garden: mountGame };
+let openApp: string | null = null;
+
+function launch(id: string) {
+  openApp = id;
+  pane.innerHTML = appView(id);
+  pane.scrollTop = 0;
+  mounts[id](pane);
+  pane.querySelector<HTMLElement>('[data-apps]')!.focus({ preventScroll: true });
+}
+
+function closeApp() {
+  if (!openApp) return false;
+  const id = openApp;
+  openApp = null;
+  unmountGame();
+  pane.innerHTML = render.game();
+  pane.querySelector<HTMLElement>(`[data-app="${id}"]`)?.focus({ preventScroll: true });
+  return true;
 }
 
 function bindForm() {
@@ -220,18 +253,22 @@ addEventListener('keydown', (e) => {
     || e.target instanceof HTMLSelectElement;
   if (e.key === 'Escape') {
     if (typing) (e.target as HTMLElement).blur();
-    else if (!closeDetail()) go('welcome');
+    else if (!closeDetail() && !closeApp()) go('welcome');
     return;
   }
   if (typing) return;
   if (current === 'welcome') {
+    if (!welcomeView.classList.contains('typed')) {
+      if (e.key !== 'Tab') skipIntro();
+      return;
+    }
     if (e.key === 'Enter' && document.activeElement !== clickBtn) go('about');
     return;
   }
   const n = Number(e.key);
   if (n >= 1 && n <= screens.length) go(screens[n - 1]);
   const step = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
-  if (step && current !== 'game') go(screens[(screens.indexOf(current) + step + screens.length) % screens.length]);
+  if (step && !openApp) go(screens[(screens.indexOf(current) + step + screens.length) % screens.length]);
 });
 
 const next = () => screens[(screens.indexOf(current as Screen) + 1) % screens.length];
@@ -250,7 +287,11 @@ function closeDetail() {
 }
 
 pane.addEventListener('click', (e) => {
-  const btn = (e.target as HTMLElement).closest<HTMLElement>('[data-project]');
+  const target = e.target as HTMLElement;
+  const app = target.closest<HTMLElement>('[data-app]');
+  if (app) return launch(app.dataset.app!);
+  if (target.closest('[data-apps]')) return void closeApp();
+  const btn = target.closest<HTMLElement>('[data-project]');
   if (!btn) return;
   shell.insertAdjacentHTML('beforeend', projectDetail(Number(btn.dataset.project)));
   const detail = shell.lastElementChild as HTMLElement;
@@ -259,7 +300,15 @@ pane.addEventListener('click', (e) => {
   detail.focus({ preventScroll: true });
 });
 
+const skipIntro = () => {
+  run++;
+  introDone();
+};
+
 bootView.addEventListener('click', () => go('welcome'));
+welcomeView.addEventListener('click', (e) => {
+  if (!welcomeView.classList.contains('typed') && e.target !== clickBtn) skipIntro();
+});
 $('btn-next').addEventListener('click', () => go(next()));
 clickBtn.addEventListener('click', () => go('about'));
 $('power').addEventListener('click', () => {

@@ -37,8 +37,15 @@
               <section class="view view--welcome" id="view-welcome" hidden>
                 <div class="welcome">
                   <p class="prompt-line">C:\&gt; RUN PORTFOLIO</p>
-                  <h1 class="welcome-title"><span id="type-welcome"></span></h1>
-                  <p class="welcome-sub"><span id="type-tagline"></span><span class="cursor" aria-hidden="true"></span></p>
+                  <div class="welcome-loading" id="welcome-loading">
+                    <span>LOADING...</span>
+                    <span class="bar"><span class="bar-fill" id="welcome-bar"></span></span>
+                  </div>
+                  <p class="welcome-title welcome-hello" id="type-welcome"></p>
+                  <div class="welcome-intro">
+                    <p class="welcome-sub"><span id="type-tagline"></span></p>
+                    <h1 class="welcome-title"><span id="type-name"></span><span class="cursor" aria-hidden="true"></span></h1>
+                  </div>
                   <button class="btn btn--click" id="btn-click" type="button">[ Click ]</button>
                   <p class="hint">or press ENTER</p>
                 </div>

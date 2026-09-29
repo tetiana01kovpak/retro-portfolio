@@ -24,6 +24,13 @@ export interface Role {
   points: string[];
 }
 
+export interface App {
+  id: string;
+  name: string;
+  file: string;
+  summary: string;
+}
+
 export interface Certificate {
   name: string;
   issuer: string;
@@ -35,19 +42,12 @@ export const profile = {
   name: 'Tetiana Kovpak',
   role: 'Junior Fullstack Developer',
   welcome: 'Welcome to my portfolio',
-  tagline: 'Full stack developer',
+  tagline: 'Fullstack developer',
   bio: [
     'Junior Fullstack Developer who combines strong technical skills with hands-on business experience.',
     'I build polished, responsive web applications with React and Node.js, with a rare edge in 3D web experiences using Three.js and Blender.',
     'I have managed my own e-commerce business and delivered commercial 3D work for clients, so I understand not just the code but the product and the customer behind it.',
     'Multilingual, self-driven, experienced in Agile/Scrum. Currently looking for a Fullstack Developer position.',
-  ],
-  languages: [
-    { name: 'English', grade: 'B2' },
-    { name: 'Italian', grade: 'B1' },
-    { name: 'German', grade: 'A2' },
-    { name: 'Ukrainian', grade: 'Native' },
-    { name: 'Russian', grade: 'Native' },
   ],
 };
 
@@ -177,6 +177,15 @@ export const education: Role[] = [
 ];
 
 // Add certificates here, e.g. { name: 'Fullstack Developer', issuer: 'GoIT', date: '2025', url: 'https://...' }
+export const apps: App[] = [
+  {
+    id: 'garden',
+    name: 'Habbit Garden',
+    file: 'GARDEN.EXE',
+    summary: 'Plant a habit, mark it done once a day and watch it grow in a 3D garden.',
+  },
+];
+
 export const certificates: Certificate[] = [];
 
 export const contact = {

@@ -32,9 +32,22 @@ test('boots, then any key skips to the welcome screen', async () => {
   await press('x');
   expect(location.hash).toBe('#welcome');
   expect(visible()).toEqual(['view-welcome']);
+  const stage = () => $('view-welcome').dataset.stage;
+  const until = async (done: () => boolean) => {
+    for (let t = 0; t < 10000 && !done(); t += 50) await vi.advanceTimersByTimeAsync(50);
+    expect(done()).toBe(true);
+  };
+  expect(stage()).toBe('loading');
+  await until(() => stage() === 'hello');
+  await until(() => $('type-welcome').textContent === 'Welcome to my portfolio');
+  expect($('type-name').textContent).toBe('');
+  await until(() => stage() === 'intro');
+  await until(() => $('view-welcome').classList.contains('typed'));
+  expect($('type-tagline').textContent).toBe('Fullstack developer');
+  expect($('type-name').textContent).toBe('Tetiana Kovpak');
   await vi.advanceTimersByTimeAsync(5000);
-  expect($('type-welcome').textContent).toBe('Welcome to my portfolio');
-  expect($('type-tagline').textContent).toBe('Full stack developer');
+  expect(stage()).toBe('intro');
+  expect($('type-name').textContent).toBe('Tetiana Kovpak');
 });
 
 test('Click opens About, one screen at a time', async () => {
@@ -102,14 +115,21 @@ test('a project opens a detail; Esc and Back return to the list with focus on it
   expect(visible()).toEqual(['view-welcome']);
 });
 
-test('navigating right after pressing power cancels the pending reboot', async () => {
+test('a key skips the intro; navigating right after power cancels the pending reboot', async () => {
   $('power').click();
+  await settle();
   await press('x');
+  expect($('view-welcome').dataset.stage).toBe('loading');
+  await press('y');
+  expect($('view-welcome').classList.contains('typed')).toBe(true);
+  expect($('type-name').textContent).toBe('Tetiana Kovpak');
+  expect(location.hash).toBe('#welcome');
   await vi.advanceTimersByTimeAsync(1000);
   expect(visible()).toEqual(['view-welcome']);
+  expect($('type-tagline').textContent).toBe('Fullstack developer');
 });
 
-test('key 4 opens the garden; plant, mark done, then remove a habit', async () => {
+test('key 4 opens the app launcher; Back and Esc return to it from the garden', async () => {
   $('btn-click').click();
   await settle();
   await press('4');
@@ -117,6 +137,27 @@ test('key 4 opens the garden; plant, mark done, then remove a habit', async () =
   expect(document.querySelector('[aria-current="page"]')?.getAttribute('data-screen')).toBe('game');
   expect(document.title.startsWith('App — ')).toBe(true);
   expect($('path').textContent).toBe('C:\\APP');
+  const entries = () => [...document.querySelectorAll<HTMLElement>('#pane [data-app]')];
+  expect(entries().map((b) => b.textContent!.includes('Habbit Garden'))).toEqual([true]);
+  expect(document.getElementById('garden-stage')).toBeNull();
+  entries()[0].click();
+  expect(document.getElementById('garden-stage')).not.toBeNull();
+  document.querySelector<HTMLElement>('[data-apps]')!.click();
+  expect(document.getElementById('garden-stage')).toBeNull();
+  expect(document.activeElement).toBe(entries()[0]);
+  entries()[0].click();
+  await press('Escape');
+  expect(location.hash).toBe('#game');
+  expect(document.getElementById('garden-stage')).toBeNull();
+  expect(document.activeElement).toBe(entries()[0]);
+  await press('ArrowRight');
+  expect(location.hash).toBe('#contact');
+  await press('ArrowLeft');
+  expect(location.hash).toBe('#game');
+});
+
+test('the Habbit Garden app: plant, mark done, then remove a habit', async () => {
+  document.querySelector<HTMLElement>('#pane [data-app="garden"]')!.click();
   expect($('garden-list').children.length).toBe(1);
   expect($('garden-detail').textContent).toContain('Old');
   const form = $('garden-form') as HTMLFormElement;
