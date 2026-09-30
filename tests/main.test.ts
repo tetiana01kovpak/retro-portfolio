@@ -43,7 +43,7 @@ test('boots, then any key skips to the welcome screen', async () => {
   expect($('type-name').textContent).toBe('');
   await until(() => stage() === 'intro');
   await until(() => $('view-welcome').classList.contains('typed'));
-  expect($('type-tagline').textContent).toBe('Fullstack developer');
+  expect($('type-tagline').textContent).toBe('Fullstack Developer');
   expect($('type-name').textContent).toBe('Tetiana Kovpak');
   await vi.advanceTimersByTimeAsync(5000);
   expect(stage()).toBe('intro');
@@ -126,7 +126,7 @@ test('a key skips the intro; navigating right after power cancels the pending re
   expect(location.hash).toBe('#welcome');
   await vi.advanceTimersByTimeAsync(1000);
   expect(visible()).toEqual(['view-welcome']);
-  expect($('type-tagline').textContent).toBe('Fullstack developer');
+  expect($('type-tagline').textContent).toBe('Fullstack Developer');
 });
 
 test('key 4 opens the app launcher; Back and Esc return to it from the garden', async () => {
@@ -138,18 +138,19 @@ test('key 4 opens the app launcher; Back and Esc return to it from the garden', 
   expect(document.title.startsWith('App — ')).toBe(true);
   expect($('path').textContent).toBe('C:\\APP');
   const entries = () => [...document.querySelectorAll<HTMLElement>('#pane [data-app]')];
-  expect(entries().map((b) => b.textContent!.includes('Habbit Garden'))).toEqual([true]);
+  expect(entries().map((b) => b.textContent!.includes('Habbit Garden'))).toEqual([false, true]);
+  const garden = () => entries().find((entry) => entry.dataset.app === 'garden')!;
   expect(document.getElementById('garden-stage')).toBeNull();
-  entries()[0].click();
+  garden().click();
   expect(document.getElementById('garden-stage')).not.toBeNull();
   document.querySelector<HTMLElement>('[data-apps]')!.click();
   expect(document.getElementById('garden-stage')).toBeNull();
-  expect(document.activeElement).toBe(entries()[0]);
-  entries()[0].click();
+  expect(document.activeElement).toBe(garden());
+  garden().click();
   await press('Escape');
   expect(location.hash).toBe('#game');
   expect(document.getElementById('garden-stage')).toBeNull();
-  expect(document.activeElement).toBe(entries()[0]);
+  expect(document.activeElement).toBe(garden());
   await press('ArrowRight');
   expect(location.hash).toBe('#contact');
   await press('ArrowLeft');

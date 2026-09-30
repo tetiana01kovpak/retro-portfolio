@@ -255,7 +255,7 @@ addEventListener('keydown', (e) => {
   const typing = e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement
     || e.target instanceof HTMLSelectElement;
   if (e.key === 'Escape') {
-    if (openApp) closeApp();
+    if (openApp === 'solfeggio') closeApp();
     else if (typing) (e.target as HTMLElement).blur();
     else if (!closeDetail() && !closeApp()) go('welcome');
     return;

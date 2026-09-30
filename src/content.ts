@@ -58,7 +58,9 @@ export const skills: { group: string; items: string[] }[] = [
   { group: 'Backend', items: ['Node.js', 'NestJS', 'REST APIs', 'WebSockets', 'Swagger / OpenAPI'] },
   { group: 'Databases', items: ['PostgreSQL', 'MongoDB', 'Redis', 'Prisma'] },
   { group: 'UI & Design', items: ['Mantine', 'Figma', 'Adobe Creative Suite'] },
+  { group: 'Data & API', items: ['REST API', 'Axios', 'Vite'] },
   { group: 'AI & Tools', items: ['Claude', 'Codex', 'Cursor', 'Git', 'Docker', 'Jira'] },
+  { group: 'Tools & DevOps', items: ['GitHub Actions (CI/CD)', 'Grafana', 'WordPress'] },
   { group: 'Languages', items: ['English', 'Ukrainian', 'German', 'Italian'] },
 ];
 
