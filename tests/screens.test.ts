@@ -28,9 +28,10 @@ test('about shows the retro photo instead of the languages box', () => {
   assert.match(html, /<figure class="photo">[\s\S]*<img src="[^"]+tetiana\.png" [^>]*alt="Tetiana Kovpak"/);
 });
 
-test('the App screen lists one launcher entry, Habbit Garden', () => {
+test('the Apps screen lists Solfeggio Frequencies and Habbit Garden', () => {
   const html = render.game();
-  assert.equal(html.match(/data-app="/g)?.length, 1);
+  assert.equal(html.match(/data-app="/g)?.length, 2);
+  assert.ok(html.includes('data-app="solfeggio"') && html.includes('Solfeggio Frequencies'));
   assert.ok(html.includes('data-app="garden"') && html.includes('Habbit Garden'));
   assert.ok(!html.includes('garden-stage'));
 });

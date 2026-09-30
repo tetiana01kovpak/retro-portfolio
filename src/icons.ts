@@ -36,5 +36,22 @@ export const skillIcons: Record<string, string[]> = {
   WordPress: ['..####..', '.#....#.', '#......#', '##.##.##', '#.#..#.#', '#......#', '.#....#.', '..####..'],
 };
 
+// Newer stack and language labels use deterministic pixel signatures so every skill keeps its own icon.
+const extendedSkills = [
+  'Adobe Creative Suite', 'Claude', 'Codex', 'Cursor', 'English', 'German', 'Italian', 'Mantine',
+  'NestJS', 'Prisma', 'REST APIs', 'React Hook Form', 'Redis', 'Swagger / OpenAPI', 'TanStack Query',
+  'Ukrainian', 'WebSockets', 'Zod', 'Zustand',
+];
+extendedSkills.forEach((name, index) => {
+  let seed = Array.from(name).reduce((hash, char) => Math.imul(hash ^ char.charCodeAt(0), 16777619) >>> 0, 2166136261);
+  const bits = Array.from({ length: 64 }, (_, i) => {
+    seed = (Math.imul(seed ^ (seed >>> 15), 2246822519) + i + index) >>> 0;
+    return (seed >>> 29) & 1 ? '#' : '.';
+  });
+  // Encode the unique index in the first two rows to prevent duplicate glyphs.
+  for (let bit = 0; bit < 16; bit++) bits[bit] = (index + 1) & (1 << bit) ? '#' : '.';
+  skillIcons[name] = Array.from({ length: 8 }, (_, row) => bits.slice(row * 8, row * 8 + 8).join(''));
+});
+
 /** The pixel icon for a skill, or an empty string when it has none. */
 export const icon = (skill: string) => (skillIcons[skill] ? pixels(skillIcons[skill], 'skill-icon') : '');

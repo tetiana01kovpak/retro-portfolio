@@ -261,7 +261,7 @@ addEventListener('keydown', (e) => {
     return;
   }
   if (typing) return;
-  if (openApp) return;
+  if (openApp === 'solfeggio') return;
   if (current === 'welcome') {
     if (!welcomeView.classList.contains('typed')) {
       if (e.key !== 'Tab') skipIntro();

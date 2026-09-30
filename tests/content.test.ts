@@ -5,7 +5,7 @@ import { apps, certificates, contact, education, experience, profile, projects, 
 
 test('welcome copy is spelled right', () => {
   assert.equal(profile.welcome, 'Welcome to my portfolio');
-  assert.equal(profile.tagline, 'Fullstack developer');
+  assert.equal(profile.tagline, 'Fullstack Developer');
 });
 
 test('content is complete', () => {
@@ -13,7 +13,10 @@ test('content is complete', () => {
   assert.ok(skills.length > 0 && skills.every((g) => g.items.length > 0));
   assert.ok(experience.length > 0 && education.length > 0);
   assert.ok(!('languages' in profile));
-  assert.deepEqual(apps.map((a) => [a.id, a.name]), [['garden', 'Habbit Garden']]);
+  assert.deepEqual(apps.map((a) => [a.id, a.name]), [
+    ['solfeggio', 'Solfeggio Frequencies'],
+    ['garden', 'Habbit Garden'],
+  ]);
 });
 
 test('every link is absolute https or mailto', () => {
