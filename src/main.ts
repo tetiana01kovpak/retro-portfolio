@@ -2,6 +2,7 @@ import '@fontsource/vt323/latin-400.css';
 import './style.css';
 import { profile } from './content.ts';
 import { mountGame, unmountGame } from './gameview.ts';
+import { mountTones, unmountTones } from './tones.ts';
 import { appView, mailto, projectDetail, render, screens, type Screen } from './screens.ts';
 
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
@@ -65,6 +66,7 @@ const bootLines: [string, number][] = [
 
 function show(view: 'boot' | 'welcome' | 'shell') {
   unmountGame();
+  unmountTones();
   openApp = null;
   bootView.hidden = view !== 'boot';
   welcomeView.hidden = view !== 'welcome';
@@ -186,7 +188,7 @@ function open(screen: Screen) {
   if (screen === 'contact') bindForm();
 }
 
-const mounts: Record<string, (root: HTMLElement) => void> = { garden: mountGame };
+const mounts: Record<string, (root: HTMLElement) => void> = { garden: mountGame, solfeggio: mountTones };
 let openApp: string | null = null;
 
 function launch(id: string) {
@@ -202,6 +204,7 @@ function closeApp() {
   const id = openApp;
   openApp = null;
   unmountGame();
+  unmountTones();
   pane.innerHTML = render.game();
   pane.querySelector<HTMLElement>(`[data-app="${id}"]`)?.focus({ preventScroll: true });
   return true;
@@ -252,11 +255,13 @@ addEventListener('keydown', (e) => {
   const typing = e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement
     || e.target instanceof HTMLSelectElement;
   if (e.key === 'Escape') {
-    if (typing) (e.target as HTMLElement).blur();
+    if (openApp) closeApp();
+    else if (typing) (e.target as HTMLElement).blur();
     else if (!closeDetail() && !closeApp()) go('welcome');
     return;
   }
   if (typing) return;
+  if (openApp) return;
   if (current === 'welcome') {
     if (!welcomeView.classList.contains('typed')) {
       if (e.key !== 'Tab') skipIntro();
@@ -314,6 +319,7 @@ clickBtn.addEventListener('click', () => go('about'));
 $('power').addEventListener('click', () => {
   history.replaceState(null, '', location.pathname + location.search);
   unmountGame();
+  unmountTones();
   computer.dataset.state = 'off';
   crt.classList.remove('on');
   current = 'boot';

@@ -42,23 +42,24 @@ export const profile = {
   name: 'Tetiana Kovpak',
   role: 'Junior Fullstack Developer',
   welcome: 'Welcome to my portfolio',
-  tagline: 'Fullstack developer',
+  tagline: 'Fullstack Developer',
   bio: [
-    'Junior Fullstack Developer who combines strong technical skills with hands-on business experience.',
-    'I build polished, responsive web applications with React and Node.js, with a rare edge in 3D web experiences using Three.js and Blender.',
-    'I have managed my own e-commerce business and delivered commercial 3D work for clients, so I understand not just the code but the product and the customer behind it.',
-    'Multilingual, self-driven, experienced in Agile/Scrum. Currently looking for a Fullstack Developer position.',
+    'Fullstack Developer combining technical, creative, and business experience to build modern web applications, e-commerce platforms, and digital products.',
+    'Skilled in React, Next.js, Angular, TypeScript, Node.js, databases, and REST APIs, with hands-on experience using AI tools to accelerate development, automate workflows, and improve digital products.',
+    'Strong UI/UX and visual design skills using Figma and Adobe Creative Suite, complemented by 3D expertise in Three.js, WebGL, and Blender.',
+    'With experience running my own e-commerce business and delivering commercial projects, I bring a product-focused mindset that connects technology, design, and customer needs. Self-driven, multilingual, and experienced in Agile/Scrum environments.',
   ],
 };
 
 export const skills: { group: string; items: string[] }[] = [
-  { group: 'Frontend', items: ['React', 'Next.js', 'Angular', 'TypeScript', 'JavaScript (ES6+)', 'HTML5', 'CSS3', 'SASS'] },
+  { group: 'Frontend', items: ['React', 'Next.js', 'Angular', 'TypeScript', 'JavaScript (ES6+)', 'HTML5', 'CSS3', 'SASS', 'TanStack Query', 'Zustand', 'React Hook Form', 'Zod'] },
   { group: 'Design', items: ['UX Design', 'Figma', 'Adobe Premiere', 'Adobe Photoshop', 'Adobe Illustrator'] },
   { group: '3D & Visual', items: ['Three.js', 'WebGL', 'Blender'] },
-  { group: 'Backend', items: ['Node.js', 'REST API', 'Docker'] },
-  { group: 'Databases', items: ['PostgreSQL', 'MongoDB'] },
-  { group: 'Data & API', items: ['REST API', 'Axios', 'Vite'] },
-  { group: 'Tools & DevOps', items: ['Git', 'GitHub Actions (CI/CD)', 'Docker', 'Grafana', 'Jira', 'WordPress'] },
+  { group: 'Backend', items: ['Node.js', 'NestJS', 'REST APIs', 'WebSockets', 'Swagger / OpenAPI'] },
+  { group: 'Databases', items: ['PostgreSQL', 'MongoDB', 'Redis', 'Prisma'] },
+  { group: 'UI & Design', items: ['Mantine', 'Figma', 'Adobe Creative Suite'] },
+  { group: 'AI & Tools', items: ['Claude', 'Codex', 'Cursor', 'Git', 'Docker', 'Jira'] },
+  { group: 'Languages', items: ['English', 'Ukrainian', 'German', 'Italian'] },
 ];
 
 export const projects: Project[] = [
@@ -153,9 +154,18 @@ export const projects: Project[] = [
 
 export const experience: Role[] = [
   {
+    title: 'Fullstack Developer',
+    where: 'KvarnerKodek',
+    dates: '2026 – Present',
+    points: [
+      'Developing software for autonomous boating systems with React, Mantine, TypeScript and NestJS.',
+      'Building modern full-stack features with PostgreSQL, REST APIs, Docker and automated testing in an Agile team.',
+    ],
+  },
+  {
     title: 'Junior Fullstack Developer',
     where: 'Independent & team projects',
-    dates: '2024 – Present',
+    dates: '2025 – 2026',
     points: [
       'Built full-stack web projects (ePharmacy, TravelTrucks, Quantum JS, NoteHub) with React, Next.js, Node.js and REST APIs.',
       'Collaborated on Quantum JS in an Agile/Scrum team: sprints, code review, Git workflows.',
@@ -164,6 +174,7 @@ export const experience: Role[] = [
   {
     title: 'Freelance 3D & Web Developer',
     where: 'Self-employed, client work',
+    dates: '2022 – 2025',
     points: ['Created commercial 3D assets and scenes in Blender and brought them into interactive Three.js web scenes.'],
   },
 ];
@@ -178,6 +189,12 @@ export const education: Role[] = [
 
 // Add certificates here, e.g. { name: 'Fullstack Developer', issuer: 'GoIT', date: '2025', url: 'https://...' }
 export const apps: App[] = [
+  {
+    id: 'solfeggio',
+    name: 'Solfeggio Frequencies',
+    file: 'SOLFEGGIO.EXE',
+    summary: 'Play eight pure sine tones with a volume control and an optional session timer.',
+  },
   {
     id: 'garden',
     name: 'Habbit Garden',

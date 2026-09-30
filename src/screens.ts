@@ -151,10 +151,27 @@ const appsView = () => `
       .join('')}
   </ol>`;
 
-const appViews: Record<string, () => string> = { garden: gardenView };
+const solfeggioView = () => `
+  <div class="game solfeggio">
+    <p class="cmd">C:\\&gt; RUN SOLFEGGIO.EXE</p>
+    <h2 class="game-title">Solfeggio Frequencies</h2>
+    <p class="solfeggio-intro">Pure sine tones. Traditional associations are not scientifically established.</p>
+    <div class="solfeggio-controls">
+      <label>VOLUME <input id="tone-volume" type="range" min="0" max="100" value="20"><output id="tone-volume-out">20%</output></label>
+      <label>SESSION <select id="tone-timer"><option value="0">Off</option><option value="5">5 min</option><option value="10">10 min</option><option value="20">20 min</option></select></label>
+      <span id="tone-remaining" aria-live="polite"></span><span id="tone-readout" role="status">Silence</span>
+    </div>
+    <div class="tone-grid">
+      ${[{hz:174,label:'Eases pain & stress'},{hz:285,label:'Enhances healing & regeneration'},{hz:396,label:'Releases fear & guilt'},{hz:417,label:'Facilitates change & letting go'},{hz:528,label:'Encourages healing & transformation'},{hz:639,label:'Supports connection & harmony'},{hz:728,label:'Claimed to destroy parasites in the body',note:'A sound tone cannot do this.'},{hz:852,label:'Fosters intuition & awareness'}].map((f,i)=>`<button class="tone-card" type="button" data-tone="${i}" aria-pressed="false"><kbd>${i+1}</kbd><strong>${f.hz} Hz</strong><span>${esc(f.label)}</span>${f.note?`<small>${esc(f.note)}</small>`:''}</button>`).join('')}
+    </div>
+    <p class="solfeggio-keys"><kbd>1</kbd>–<kbd>8</kbd> play a tone · <kbd>SPACE</kbd> stop</p>
+    <p class="project-links">${ext('https://github.com/tetiana01kovpak/solfeggio2', 'Source')}</p>
+  </div>`;
+
+const appViews: Record<string, () => string> = { garden: gardenView, solfeggio: solfeggioView };
 
 export const appView = (id: string) =>
-  `<button class="btn app-back" type="button" data-apps>[ Back ]</button>${appViews[id]()}`;
+  `<button class="btn app-back" type="button" data-apps>[ Back to Apps ]</button>${appViews[id]()}`;
 
 export const render: Record<Screen, () => string> = {
   about,
