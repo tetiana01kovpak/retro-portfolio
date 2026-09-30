@@ -1,5 +1,5 @@
 import photo from './assets/tetiana.png';
-import { icon, pixels } from './icons.ts';
+import { icon } from './icons.ts';
 import { apps, certificates, contact, education, experience, profile, projects, skills, type Project, type Role } from './content.ts';
 
 export const screens = ['about', 'projects', 'experience', 'game', 'contact'] as const;
@@ -51,13 +51,13 @@ export const projectDetail = (i: number) => {
   <div class="project-detail" data-for="${i}" role="dialog" tabindex="-1" aria-modal="true" aria-label="${esc(p.name)}">
     <p class="cmd">C:\\PROJECTS&gt; TYPE ${esc(p.file)}</p>
     <div class="detail-head"><h2 class="title">${esc(p.name)}</h2></div>
-    <figure class="project-art" role="img" aria-label="Retro pixel art preview for ${esc(p.name)}">
+    <figure class="project-art">
       <div class="project-art-screen">
         <span class="project-art-file">${esc(p.file)}</span>
-        ${pixels(p.icon, 'project-art-image')}
-        <span class="project-art-prompt">C:\\&gt; READY_</span>
+        <img class="project-art-image" src="${esc(`${import.meta.env.BASE_URL}images/projects/${p.preview}`)}" alt="Screenshot of the ${esc(p.name)} project" />
+        <span class="project-art-prompt">C:\\&gt; SCREENSHOT_</span>
       </div>
-      <figcaption>KOVPAK SYSTEMS · 8-BIT PROJECT PREVIEW</figcaption>
+      <figcaption>PROJECT SCREENSHOT · PHOSPHOR CRT FILTER</figcaption>
     </figure>
     ${p.description.map((d) => `<p>${esc(d)}</p>`).join('')}
     <p class="project-hl">${highlights(p)}</p>

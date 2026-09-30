@@ -8,9 +8,9 @@ export interface Link {
 export interface Project {
   name: string;
   file: string;
+  preview: string;
   summary: string;
   description: string[];
-  icon: string[];
   highlights: string[];
   stack: string[];
   repo: string;
@@ -68,6 +68,7 @@ export const projects: Project[] = [
   {
     name: 'ePharmacy',
     file: 'EPHARM.TSX',
+    preview: 'epharmacy.jpg',
     summary: 'Full-stack pharmacy store: browse medicine, find nearby pharmacies, manage a cart and check out.',
     description: [
       'A full-stack pharmacy e-commerce app built from a Figma design and functional specification.',
@@ -75,7 +76,6 @@ export const projects: Project[] = [
       'Adding to cart as a guest opens an inline login modal; once signed in, the item is added and the visitor continues where they left off.',
       'The Express REST API uses MongoDB with JWT access/refresh auth, bcrypt-hashed passwords, an httpOnly refresh cookie and Yup request validation.',
     ],
-    icon: ['..####..', '..#..#..', '###..###', '#......#', '#......#', '###..###', '..#..#..', '..####..'],
     highlights: ['Search & filter', 'Pagination', 'Cart & checkout', 'JWT auth', 'REST API'],
     stack: ['React 19', 'TypeScript', 'Redux Toolkit', 'Express', 'MongoDB', 'JWT'],
     repo: 'https://github.com/tetiana01kovpak/epharmacy_client',
@@ -84,13 +84,13 @@ export const projects: Project[] = [
   {
     name: 'TravelTrucks',
     file: 'TRUCKS.TSX',
+    preview: 'traveltrucks.jpg',
     summary: 'Camper rental app: browse, filter and book campers with a gallery, reviews and a booking form.',
     description: [
       'A web app for browsing and booking camper rentals, built with the Next.js App Router and TypeScript on a public campers API.',
       'The catalog filters on the backend by location, vehicle type, engine and transmission, keeps filters in the URL and loads more results with TanStack Query infinite queries.',
       'Each camper page shows a Swiper thumbnail gallery, specs, amenities and user reviews, with a validated booking form and toast notifications.',
     ],
-    icon: ['........', '######..', '#.#.####', '#.#.#..#', '########', '########', '.##..##.', '........'],
     highlights: ['URL-driven filters', 'Infinite loading', 'Image gallery', 'Booking form', 'Reviews'],
     stack: ['Next.js 15', 'TypeScript', 'TanStack Query', 'React Hook Form', 'Yup', 'Swiper'],
     repo: 'https://github.com/tetiana01kovpak/TravelTrucks',
@@ -99,12 +99,12 @@ export const projects: Project[] = [
   {
     name: 'Quantum JS',
     file: 'QUANTUM.EXE',
+    preview: 'quantumjs.jpg',
     summary: 'E-commerce furniture store SPA with catalog, ordering and reviews. Agile team project.',
     description: [
       'An e-commerce furniture store SPA with a product catalog, ordering and customer reviews.',
       'Built in an Agile team: filtering and pagination over a REST API, modal order forms and a Swiper reviews slider, all responsive.',
     ],
-    icon: ['........', '.######.', '.#....#.', '.#....#.', '########', '#......#', '########', '.#....#.'],
     highlights: ['Filtering', 'Pagination', 'Modals', 'REST API', 'Responsive'],
     stack: ['JavaScript', 'Vite', 'Axios', 'Swiper'],
     repo: 'https://github.com/tetiana01kovpak/QuantumJS',
@@ -113,12 +113,12 @@ export const projects: Project[] = [
   {
     name: 'FlowBloom',
     file: 'FLOWBLM.HTM',
+    preview: 'flowbloom.jpg',
     summary: 'Responsive, mobile-first landing page for a yoga studio.',
     description: [
       'A responsive, mobile-first landing page for a yoga studio.',
       'Hand-written HTML and CSS with a layout that scales from phones up to wide desktop screens.',
     ],
-    icon: ['...##...', '..####..', '#..##..#', '##.##.##', '.######.', '..####..', '...##...', '.######.'],
     highlights: ['Mobile-first', 'Responsive layout'],
     stack: ['HTML', 'CSS'],
     repo: 'https://github.com/tetiana01kovpak/FlowBloom',
@@ -127,12 +127,12 @@ export const projects: Project[] = [
   {
     name: 'NoteHub',
     file: 'NOTEHUB.SYS',
+    preview: 'notehub.jpg',
     summary: 'Full-stack notes app: create, edit, delete and filter notes with persistent storage.',
     description: [
       'A full-stack notes app: create, edit, delete and filter notes.',
       'A Node.js REST API keeps notes in persistent storage and is deployed on Render.',
     ],
-    icon: ['######..', '#....##.', '#.##..#.', '#.....#.', '#.###.#.', '#.....#.', '#.###.#.', '#######.'],
     highlights: ['CRUD', 'Filtering', 'Persistent storage', 'Deployed on Render'],
     stack: ['Node.js', 'REST API'],
     repo: 'https://github.com/tetiana01kovpak/nodejs-hw',
@@ -141,13 +141,13 @@ export const projects: Project[] = [
   {
     name: 'ChillScape',
     file: 'CHILLSCP.TSX',
+    preview: 'chillscape.jpg',
     summary: 'Web app for discovering travel locations: browse, filter, log in and leave reviews.',
     description: [
       'A travel discovery frontend built with the Next.js App Router. Visitors can browse and filter locations, view location details, sign in or register, and leave reviews.',
       'The interface uses CSS Modules, TanStack Query and Axios for data fetching, with Zustand for shared state. The project also uses Formik and Yup for forms and validation, plus Swiper for carousels.',
       'Authentication and data requests are handled through Next.js route handlers and HTTP-only cookies.',
     ],
-    icon: ['......#.', '.....###', '..#...#.', '.###....', '#####.#.', '######.#', '########', '........'],
     highlights: ['Browse & filter', 'Authentication', 'Reviews'],
     stack: ['Next.js 16', 'React 19', 'TypeScript', 'CSS Modules', 'TanStack Query', 'Axios', 'Zustand', 'Formik', 'Yup', 'Swiper', 'React Hot Toast'],
     repo: 'https://github.com/tetiana01kovpak/chillscape-frontend',

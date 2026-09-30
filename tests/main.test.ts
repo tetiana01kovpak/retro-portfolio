@@ -93,7 +93,7 @@ test('a project opens a detail; Esc and Back return to the list with focus on it
   openBtn().click();
   const detail = () => document.querySelector('.project-detail');
   expect(detail()?.textContent).toContain('TravelTrucks');
-  expect(detail()?.querySelector('svg rect')).not.toBeNull();
+  expect(detail()?.querySelector('img.project-art-image')?.getAttribute('src')).toContain('traveltrucks.jpg');
   expect(document.activeElement).toBe(detail());
   expect(['pane', 'btn-next'].map((id) => $(id).closest<HTMLElement>('[inert]'))).not.toContain(null);
   await press('Escape');
