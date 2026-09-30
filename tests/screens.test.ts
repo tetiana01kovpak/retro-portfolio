@@ -30,7 +30,9 @@ test('about shows the retro photo instead of the languages box', () => {
 
 test('the Apps screen lists Solfeggio Frequencies and Habbit Garden', () => {
   const html = render.game();
-  assert.equal(html.match(/data-app="/g)?.length, 2);
+  assert.equal(html.match(/class="project-open"[^>]*data-app="/g)?.length, 2);
+  assert.equal(html.match(/class="btn btn--details"[^>]*data-app="/g)?.length, 2);
+  assert.equal(html.match(/\[ Open \]/g)?.length, 2);
   assert.ok(html.includes('data-app="solfeggio"') && html.includes('Solfeggio Frequencies'));
   assert.ok(html.includes('data-app="garden"') && html.includes('Habbit Garden'));
   assert.ok(!html.includes('garden-stage'));

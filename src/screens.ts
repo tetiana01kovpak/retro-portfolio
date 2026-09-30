@@ -157,6 +157,9 @@ const appsView = () => `
           <span class="project-head"><span class="project-name">${esc(a.name)}</span><span class="project-file">${esc(a.file)}</span></span>
           <span class="project-summary">${esc(a.summary)}</span>
         </button>
+        <div class="project-actions">
+          <button class="btn btn--details" type="button" data-app="${esc(a.id)}">[ Open ]</button>
+        </div>
       </li>`,
       )
       .join('')}

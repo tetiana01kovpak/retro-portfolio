@@ -137,7 +137,7 @@ test('key 4 opens the app launcher; Back and Esc return to it from the garden', 
   expect(document.querySelector('[aria-current="page"]')?.getAttribute('data-screen')).toBe('game');
   expect(document.title.startsWith('App — ')).toBe(true);
   expect($('path').textContent).toBe('C:\\APP');
-  const entries = () => [...document.querySelectorAll<HTMLElement>('#pane [data-app]')];
+  const entries = () => [...document.querySelectorAll<HTMLElement>('#pane .project-open[data-app]')];
   expect(entries().map((b) => b.textContent!.includes('Habbit Garden'))).toEqual([false, true]);
   const garden = () => entries().find((entry) => entry.dataset.app === 'garden')!;
   expect(document.getElementById('garden-stage')).toBeNull();
