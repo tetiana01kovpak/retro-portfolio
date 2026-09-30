@@ -143,12 +143,13 @@ export const projects: Project[] = [
     file: 'CHILLSCP.TSX',
     summary: 'Web app for discovering travel locations: browse, filter, log in and leave reviews.',
     description: [
-      'A web app for discovering travel locations.',
-      'Visitors browse and filter places, log in and leave reviews. Built with React and TypeScript.',
+      'A travel discovery frontend built with the Next.js App Router. Visitors can browse and filter locations, view location details, sign in or register, and leave reviews.',
+      'The interface uses CSS Modules, TanStack Query and Axios for data fetching, with Zustand for shared state. The project also uses Formik and Yup for forms and validation, plus Swiper for carousels.',
+      'Authentication and data requests are handled through Next.js route handlers and HTTP-only cookies.',
     ],
     icon: ['......#.', '.....###', '..#...#.', '.###....', '#####.#.', '######.#', '########', '........'],
     highlights: ['Browse & filter', 'Authentication', 'Reviews'],
-    stack: ['TypeScript', 'React'],
+    stack: ['Next.js 16', 'React 19', 'TypeScript', 'CSS Modules', 'TanStack Query', 'Axios', 'Zustand', 'Formik', 'Yup', 'Swiper', 'React Hot Toast'],
     repo: 'https://github.com/tetiana01kovpak/chillscape-frontend',
     live: 'https://chillscape-frontend.vercel.app/',
   },
@@ -156,7 +157,7 @@ export const projects: Project[] = [
 
 export const experience: Role[] = [
   {
-    title: 'Fullstack Developer',
+    title: 'Junior Fullstack Developer',
     where: 'KvarnerKodek',
     dates: '2026 – Present',
     points: [
@@ -177,7 +178,10 @@ export const experience: Role[] = [
     title: 'Freelance 3D & Web Developer',
     where: 'Self-employed, client work',
     dates: '2022 – 2025',
-    points: ['Created commercial 3D assets and scenes in Blender and brought them into interactive Three.js web scenes.'],
+    points: [
+      'Created commercial 3D assets and scenes in Blender and brought them into interactive Three.js web scenes.',
+      'Built and maintained WordPress websites and WooCommerce e-commerce stores.',
+    ],
   },
 ];
 
@@ -185,6 +189,7 @@ export const education: Role[] = [
   {
     title: 'Fullstack Developer course',
     where: 'GoIT',
+    dates: '2025 – 2026',
     points: ['HTML/CSS, JavaScript, React, Next.js, Node.js'],
   },
 ];

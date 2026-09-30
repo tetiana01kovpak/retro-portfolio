@@ -1036,6 +1036,21 @@ kbd {
 .project-open:focus-visible {
   outline: none;
 }
+.project-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5em 1em;
+  margin-top: 0.5em;
+}
+.project-actions .btn--details {
+  font-size: 0.8em;
+  padding: 0.15em 0.7em;
+}
+.project-actions .project-links {
+  margin: 0;
+}
 .project-summary {
   display: block;
 }
@@ -1068,6 +1083,57 @@ kbd {
   fill: var(--phosphor-hi);
   shape-rendering: crispEdges;
   filter: drop-shadow(0 0 4px var(--phosphor));
+}
+.project-art {
+  max-width: 36em;
+  margin: 0.4em 0 1.2em;
+  padding: 0.45em;
+  border: 2px solid var(--phosphor-dim);
+  background: #030905;
+  box-shadow: inset 0 0 16px rgba(77, 255, 136, 0.12), 0 0 10px rgba(77, 255, 136, 0.16);
+}
+.project-art-screen {
+  position: relative;
+  display: grid;
+  min-height: 13em;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid var(--phosphor-dim);
+  background-color: #07130b;
+  background-image: linear-gradient(rgba(77, 255, 136, 0.045) 1px, transparent 1px), linear-gradient(90deg, rgba(77, 255, 136, 0.045) 1px, transparent 1px), radial-gradient(ellipse at center, rgba(20, 78, 40, 0.5), transparent 72%);
+  background-size: 8px 8px, 8px 8px, auto;
+  box-shadow: inset 0 0 28px rgba(0, 0, 0, 0.8);
+}
+.project-art-screen::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+  pointer-events: none;
+  background: repeating-linear-gradient(0deg, transparent 0 3px, rgba(0, 0, 0, 0.16) 3px 4px);
+}
+.project-art-image {
+  width: clamp(8em, 32vw, 14em);
+  height: auto;
+  fill: var(--phosphor-hi);
+  shape-rendering: crispEdges;
+  filter: drop-shadow(0 0 5px var(--phosphor)) drop-shadow(0 0 16px rgba(77, 255, 136, 0.35));
+}
+.project-art-file,
+.project-art-prompt {
+  position: absolute;
+  z-index: 1;
+  color: var(--phosphor-dim);
+  font-size: 0.72em;
+  letter-spacing: 0.08em;
+}
+.project-art-file { top: 0.6em; left: 0.7em; }
+.project-art-prompt { right: 0.7em; bottom: 0.55em; color: var(--amber); }
+.project-art figcaption {
+  padding-top: 0.45em;
+  color: var(--phosphor-dim);
+  font-size: 0.65em;
+  letter-spacing: 0.12em;
+  text-align: center;
 }
 .project-detail .tags {
   margin-bottom: 0.8em;

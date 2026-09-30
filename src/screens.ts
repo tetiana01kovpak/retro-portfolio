@@ -50,7 +50,15 @@ export const projectDetail = (i: number) => {
   return `
   <div class="project-detail" data-for="${i}" role="dialog" tabindex="-1" aria-modal="true" aria-label="${esc(p.name)}">
     <p class="cmd">C:\\PROJECTS&gt; TYPE ${esc(p.file)}</p>
-    <div class="detail-head">${pixels(p.icon, 'detail-icon')}<h2 class="title">${esc(p.name)}</h2></div>
+    <div class="detail-head"><h2 class="title">${esc(p.name)}</h2></div>
+    <figure class="project-art" role="img" aria-label="Retro pixel art preview for ${esc(p.name)}">
+      <div class="project-art-screen">
+        <span class="project-art-file">${esc(p.file)}</span>
+        ${pixels(p.icon, 'project-art-image')}
+        <span class="project-art-prompt">C:\\&gt; READY_</span>
+      </div>
+      <figcaption>KOVPAK SYSTEMS · 8-BIT PROJECT PREVIEW</figcaption>
+    </figure>
     ${p.description.map((d) => `<p>${esc(d)}</p>`).join('')}
     <p class="project-hl">${highlights(p)}</p>
     <ul class="tags">${stack(p)}</ul>
@@ -73,7 +81,10 @@ const projectsView = () => `
         </button>
         <p class="project-hl">${highlights(p)}</p>
         <ul class="tags tags--small">${stack(p)}</ul>
-        <p class="project-links">${links(p)}</p>
+        <div class="project-actions">
+          <button class="btn btn--details" type="button" data-project="${i}">[ Details ]</button>
+          <p class="project-links">${links(p)}</p>
+        </div>
       </li>`,
       )
       .join('')}
