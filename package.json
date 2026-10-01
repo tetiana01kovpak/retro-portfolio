@@ -5,13 +5,14 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc --noEmit && vite build",
+    "build": "tsc --noEmit && node --experimental-strip-types scripts/build.mjs",
     "preview": "vite preview",
     "test": "vitest run --pool=forks --maxWorkers=2",
     "check": "npm run build && npm test"
   },
   "dependencies": {
     "@fontsource/vt323": "^5.3.0",
+    "bootstrap": "^5.3.8",
     "happy-dom": "^20.14.5",
     "three": "^0.186.1",
     "typescript": "^5.9.3",

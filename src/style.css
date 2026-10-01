@@ -1210,6 +1210,23 @@ kbd {
   flex-wrap: wrap;
   margin-bottom: 0.2em;
 }
+
+.cv-download {
+  display: inline-block;
+  padding: 3px 9px;
+  border: 1px solid var(--phosphor-dim);
+  color: var(--phosphor-hi);
+  text-decoration: none;
+  box-shadow: inset 1px 1px 0 rgba(182, 255, 207, 0.22), 2px 2px 0 rgba(0, 0, 0, 0.35);
+}
+
+.cv-download:hover,
+.cv-download:focus-visible {
+  color: var(--phosphor);
+  background: var(--phosphor-faint);
+  outline: 1px solid var(--phosphor);
+  outline-offset: 2px;
+}
 .contact-label {
   min-width: 6em;
   color: var(--amber);

@@ -117,6 +117,7 @@ const contactView = () => `
         return `<li><span class="contact-label">${esc(l.label.toUpperCase())}</span><a class="link" href="${esc(l.href)}"${attrs}>${esc(text)}</a></li>`;
       })
       .join('')}
+    <li><span class="contact-label">CV</span><a class="btn cv-download" href="${import.meta.env.BASE_URL}cv.pdf" download="Tetiana-Kovpak-CV.pdf" aria-label="Download Tetiana Kovpak's CV as a PDF">[ Download PDF ]</a></li>
   </ul>
   <form class="form" id="mail-form" novalidate>
     <p class="box-title">NEW MESSAGE</p>

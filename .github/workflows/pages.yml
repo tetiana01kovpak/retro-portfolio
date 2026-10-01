@@ -25,10 +25,15 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm test
+      - id: chrome
+        uses: browser-actions/setup-chrome@v1
       # "/retro-portfolio" on github.io, "" once a custom domain is set.
       - id: pages
         uses: actions/configure-pages@v5
-      - run: npm run build -- --base="${{ steps.pages.outputs.base_path }}/"
+      - run: npm run build
+        env:
+          PAGES_BASE_PATH: ${{ steps.pages.outputs.base_path }}/
+          CHROME_BIN: ${{ steps.chrome.outputs.chrome-path }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

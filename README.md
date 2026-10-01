@@ -24,7 +24,7 @@ server or sharing. Without WebGL the garden shows a text version with the same c
 ## Build and check
 
 ```sh
-npm run build      # type-check + production build into dist/
+  npm run build      # type-check + production build into dist/, including cv.pdf (requires Chrome or Edge)
 npm run check      # build + tests (vitest; Node 22.12+, 24 or 26+)
 ```
 

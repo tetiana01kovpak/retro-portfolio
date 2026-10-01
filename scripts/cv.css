@@ -1,0 +1,35 @@
+@page { size: A4; margin: 12mm 14mm; }
+* { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+html, body { margin: 0; background: #fff; color: #1c2938; font-family: Arial, Helvetica, sans-serif; font-size: 9pt; line-height: 1.36; }
+.cv-sheet { max-width: 100%; padding: 0; }
+.hero { min-height: 34mm; padding: 7mm 8mm; margin: 0 0 5mm; color: #f7fbfc; background: #173b45; border-bottom: 3px solid #30a89a; }
+.portrait { width: 25mm; height: 25mm; object-fit: cover; object-position: center 30%; border: 2px solid #8be0ce; border-radius: 50%; }
+.eyebrow { margin: 0 0 2mm; color: #9be0d2; font-size: 8pt; font-weight: 700; letter-spacing: .16em; }
+.hero h1 { margin: 0; color: #fff; font-size: 27pt; font-weight: 700; letter-spacing: -.03em; }
+.headline { margin: 1mm 0 0; color: #cae5e4; font-size: 12pt; }
+.hero-contact { min-width: 45mm; color: #d7eceb; font-size: 8pt; line-height: 1.7; }
+.hero-contact a { color: #d7eceb; text-decoration: none; }
+.cv-section { margin: 0 0 4mm; break-inside: auto; }
+.cv-section > h2 { display: flex; align-items: center; gap: 3mm; margin: 0 0 2mm; color: #167c80; font-size: 12pt; font-weight: 700; letter-spacing: .035em; text-transform: uppercase; }
+.cv-section > h2::after { flex: 1; height: 1px; background: #b8d7d3; content: ''; }
+.bio p { margin: 0 0 1.5mm; }
+.entry { margin: 0 0 2.5mm; break-inside: avoid; }
+.entry-head { display: flex; justify-content: space-between; align-items: baseline; gap: 5mm; }
+.entry h3, .project-card h3, .skill-group h3 { margin: 0; color: #203a4a; font-size: 9.4pt; font-weight: 700; }
+.meta { margin: 0; color: #54717a; font-size: 8.4pt; }
+.date { flex: 0 0 auto; color: #167c80; font-size: 8pt; font-weight: 700; }
+.entry ul { margin: 1mm 0 0; padding-left: 4.5mm; }
+.entry li { padding-left: .5mm; margin-bottom: .4mm; }
+.project-card { grid-column: span 1; height: 100%; padding: 2.5mm 3mm; border: 1px solid #d7e4e4; border-left: 2px solid #30a89a; border-radius: 2mm; background: #f7faf9; break-inside: avoid; }
+.project-card p { margin: 1mm 0; }
+.project-card .stack { color: #60767d; font-size: 7.5pt; }
+.project-links { display: flex; gap: 4mm; font-size: 7.5pt; font-weight: 700; }
+.project-links a, footer a { color: #167c80; text-decoration: none; }
+.skills-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2mm 6mm; }
+.skill-group { break-inside: avoid; }
+.skill-group h3 { color: #167c80; font-size: 8.5pt; }
+.skill-group p { margin: .5mm 0 0; color: #394b59; font-size: 8pt; }
+.education-entry { margin-bottom: 1mm; }
+.education-entry > p, .languages { margin: 1mm 0 0; }
+footer { margin-top: 4mm; padding-top: 2mm; border-top: 1px solid #d7e4e4; color: #71838b; font-size: 7.5pt; }
+@media print { .container-fluid { width: 100%; } .row { --bs-gutter-x: .75rem; } }
