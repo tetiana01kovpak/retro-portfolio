@@ -40,14 +40,14 @@ async function browserPath() {
 }
 
 function renderCv(css, fontFaces) {
-  const skillRows = [
+  const skillGroups = [
     ['Frontend', ['React', 'Next.js', 'Angular', 'TypeScript', 'JavaScript (ES6+)', 'HTML5', 'CSS3', 'Sass', 'TanStack Query', 'Zustand', 'React Hook Form', 'Zod']],
-    ['Backend', ['Node.js', 'NestJS', 'Express', 'REST APIs', 'WebSockets', 'Swagger / OpenAPI']],
-    ['Data', ['PostgreSQL', 'MongoDB', 'Redis', 'Prisma']],
+    ['Backend & APIs', ['Node.js', 'NestJS', 'Express', 'REST APIs', 'WebSockets', 'Swagger / OpenAPI']],
+    ['Databases', ['PostgreSQL', 'MongoDB', 'Redis', 'Prisma']],
     ['Design & 3D', ['UI/UX', 'Figma', 'Adobe Creative Suite', 'Photoshop', 'Illustrator', 'Premiere', 'Three.js', 'WebGL', 'Blender']],
-    ['Tools', ['Git', 'Docker', 'Jira', 'GitHub Actions', 'Grafana', 'WordPress', 'Claude', 'Codex', 'Cursor']],
-    ['Methods', ['Agile / Scrum', 'Code review', 'Responsive design', 'Automated testing']],
-  ].map(([label, items]) => `<p class="skill-row"><strong>${escapeHtml(label)}:</strong> ${items.map(escapeHtml).join(', ')}</p>`).join('');
+    ['Tools & AI', ['Git', 'Docker', 'Jira', 'GitHub Actions', 'Grafana', 'WordPress', 'Claude', 'Codex', 'Cursor']],
+    ['Ways of Working', ['Agile / Scrum', 'Code review', 'Responsive design', 'Automated testing']],
+  ].map(([label, items]) => `<article class="skill-group"><h3>${escapeHtml(label)}</h3><p>${items.map(escapeHtml).join(', ')}</p></article>`).join('');
 
   const roles = experience.map((role) => `
     <article class="entry">
@@ -67,10 +67,10 @@ function renderCv(css, fontFaces) {
   const orderedProjects = projectOrder.map((name) => projects.find((project) => project.name === name)).filter(Boolean);
   const projectEntries = orderedProjects.map((project) => `
     <article class="project-entry">
-      <h3>${escapeHtml(project.name)} <span class="project-type">| ${escapeHtml(projectTypes[project.name] || 'Web application')}</span></h3>
-      <p>${escapeHtml(project.summary)}</p>
-      <p class="project-highlights">${project.highlights.slice(0, 5).map(escapeHtml).join(' · ')}</p>
-      <p class="project-meta"><span>${project.stack.slice(0, 7).map(escapeHtml).join(', ')}</span><span class="project-links">${project.live ? `<a href="${safeHref(project.live)}">Live</a> · ` : ''}<a href="${safeHref(project.repo)}">Code</a></span></p>
+      <header class="project-heading"><h3>${escapeHtml(project.name)}</h3><p class="project-type">${escapeHtml(projectTypes[project.name] || 'Web application')}</p></header>
+      <p class="project-summary">${escapeHtml(project.summary)}</p>
+      <p class="project-highlights"><strong>Highlights</strong> ${project.highlights.slice(0, 5).map(escapeHtml).join(' · ')}</p>
+      <footer class="project-meta"><span class="project-stack"><strong>Stack</strong> ${project.stack.slice(0, 7).map(escapeHtml).join(', ')}</span><span class="project-links">${project.live ? `<a href="${safeHref(project.live)}">Live demo</a>` : ''}<a href="${safeHref(project.repo)}">Source</a></span></footer>
     </article>`).join('');
 
   const study = education.map((item) => `
@@ -86,15 +86,16 @@ function renderCv(css, fontFaces) {
 <main id="cv" class="cv-document">
   <header class="cv-header">
     <div class="identity"><h1>${escapeHtml(profile.name)}</h1><p class="headline">${escapeHtml(profile.role)}</p></div>
-    <address class="contact"><a href="mailto:${escapeHtml(contact.email)}">${escapeHtml(contact.email)}</a><br><a href="https://www.linkedin.com/in/tetiana-kovpak/">linkedin.com/in/tetiana-kovpak</a><br><a href="https://github.com/tetiana01kovpak">github.com/tetiana01kovpak</a><br><a href="https://tetiana01kovpak.github.io/retro-portfolio/">tetianakovpak.dev</a></address>
+    <address class="contact"><a href="mailto:${escapeHtml(contact.email)}">${escapeHtml(contact.email)}</a><span> · </span><a href="https://www.linkedin.com/in/tetiana-kovpak/">LinkedIn</a><span> · </span><a href="https://github.com/tetiana01kovpak">GitHub</a><span> · </span><a href="https://tetianakovpak.dev/">tetianakovpak.dev</a></address>
   </header>
   <section class="cv-section"><h2>Summary</h2><div class="bio">${profile.bio.map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`).join('')}</div></section>
   <section class="cv-section"><h2>Experience</h2>${roles}</section>
+  <section class="cv-section education"><h2>Education</h2>${study}</section>
+  <section class="cv-section languages-section"><h2>Languages</h2><p class="languages">Ukrainian · English · German · Italian</p></section>
   <div class="continuation">
     <header class="continuation-header"><strong>${escapeHtml(profile.name)}</strong><span>${escapeHtml(profile.role)}</span></header>
-    <section class="cv-section projects-section"><h2>Selected Projects</h2><div class="project-grid">${projectEntries}</div></section>
-    <section class="cv-section skills-section"><h2>Technical Skills</h2><div class="skills-grid">${skillRows}</div></section>
-    <section class="cv-section education"><h2>Education &amp; Languages</h2>${study}<p class="languages"><strong>Languages:</strong> Ukrainian, English, German, Italian</p></section>
+    <section class="cv-section projects-section"><h2>Projects</h2><div class="project-grid">${projectEntries}</div></section>
+    <section class="cv-section skills-section"><h2>Technical Skills</h2><div class="skills-grid">${skillGroups}</div></section>
   </div>
   <footer>Portfolio <span>·</span> <a href="https://tetiana01kovpak.github.io/retro-portfolio/">tetiana01kovpak.github.io/retro-portfolio</a></footer>
 </main>
