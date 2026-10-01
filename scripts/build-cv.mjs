@@ -40,6 +40,8 @@ async function browserPath() {
 }
 
 function renderCv(css, fontFaces) {
+  const summary = [...profile.bio];
+  summary[0] = summary[0].replace(/^Fullstack Developer/, 'Junior Fullstack Developer');
   const skillGroups = [
     ['Frontend', ['React', 'Next.js', 'Angular', 'TypeScript', 'JavaScript (ES6+)', 'HTML5', 'CSS3', 'Sass', 'TanStack Query', 'Zustand', 'React Hook Form', 'Zod']],
     ['Backend & APIs', ['Node.js', 'NestJS', 'Express', 'REST APIs', 'WebSockets', 'Swagger / OpenAPI']],
@@ -88,7 +90,7 @@ function renderCv(css, fontFaces) {
     <div class="identity"><h1>${escapeHtml(profile.name)}</h1><p class="headline">${escapeHtml(profile.role)}</p></div>
     <address class="contact"><a href="mailto:${escapeHtml(contact.email)}">${escapeHtml(contact.email)}</a><span> · </span><a href="https://www.linkedin.com/in/tetiana-kovpak/">LinkedIn</a><span> · </span><a href="https://github.com/tetiana01kovpak">GitHub</a><span> · </span><a href="https://tetianakovpak.dev/">tetianakovpak.dev</a></address>
   </header>
-  <section class="cv-section"><h2>Summary</h2><div class="bio">${profile.bio.map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`).join('')}</div></section>
+  <section class="cv-section"><h2>Summary</h2><div class="bio">${summary.map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`).join('')}</div></section>
   <section class="cv-section"><h2>Experience</h2>${roles}</section>
   <section class="cv-section education"><h2>Education</h2>${study}</section>
   <section class="cv-section languages-section"><h2>Languages</h2><p class="languages">English — Advanced · Ukrainian — Native · German — Intermediate · Italian — Intermediate</p></section>
