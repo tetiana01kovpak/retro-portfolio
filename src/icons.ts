@@ -38,9 +38,9 @@ export const skillIcons: Record<string, string[]> = {
 
 // Newer stack and language labels use deterministic pixel signatures so every skill keeps its own icon.
 const extendedSkills = [
-  'Adobe Creative Suite', 'Claude', 'Codex', 'Cursor', 'English', 'German', 'Italian', 'Mantine',
+  'Adobe Creative Suite', 'Claude', 'Codex', 'Cursor', 'English — Advanced', 'German — Intermediate', 'Italian — Intermediate', 'Mantine',
   'NestJS', 'Prisma', 'REST APIs', 'React Hook Form', 'Redis', 'Swagger / OpenAPI', 'TanStack Query',
-  'Ukrainian', 'WebSockets', 'Zod', 'Zustand',
+  'Ukrainian — Native', 'WebSockets', 'Zod', 'Zustand',
 ];
 extendedSkills.forEach((name, index) => {
   let seed = Array.from(name).reduce((hash, char) => Math.imul(hash ^ char.charCodeAt(0), 16777619) >>> 0, 2166136261);
