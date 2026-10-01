@@ -75,6 +75,7 @@ const projectsView = () => `
       .map(
         (p, i) => `
       <li class="project">
+        <span class="project-topbar" aria-hidden="true"></span>
         <button class="project-open" type="button" data-project="${i}">
           <span class="project-head"><span class="project-no">${String(i + 1).padStart(2, '0')}</span><span class="project-name">${esc(p.name)}</span><span class="project-file">${esc(p.file)}</span></span>
           <span class="project-summary">${esc(p.summary)}</span>

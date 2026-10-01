@@ -50,6 +50,7 @@ test('the garden app has the stage, form, list and detail', () => {
 
 test('projects screen lists every project with its links', () => {
   const html = render.projects();
+  assert.equal(html.match(/class="project-topbar"/g)?.length, projects.length);
   for (const p of projects) {
     assert.ok(html.includes(p.repo), p.name);
     if (p.live) assert.ok(html.includes(p.live), p.name);
