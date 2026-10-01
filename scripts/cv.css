@@ -37,7 +37,7 @@ a { color: inherit; text-decoration-thickness: .06em; text-underline-offset: .12
 .project-stack { color: var(--muted); font-size: .82rem; overflow-wrap: anywhere; }
 .project-links { display: flex; gap: 1rem; font-size: .86rem; font-weight: 700; }
 .skills-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .7rem 1rem; }
-.skill-group { min-width: 0; padding: .55rem .75rem; border-left: .16rem solid var(--ink); background: transparent; break-inside: avoid; }
+.skill-group { min-width: 0; padding: .55rem .75rem; border-left: .06rem solid var(--rule); background: transparent; break-inside: avoid; }
 .skill-group h3 { margin: 0 0 .24rem; font-size: .86rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
 .skill-group p { margin: 0; font-size: .9rem; }
 .education-entry { grid-template-columns: 7.1rem minmax(0, 1fr); margin-bottom: .7rem; }
