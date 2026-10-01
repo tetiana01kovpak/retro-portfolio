@@ -3,7 +3,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import puppeteer from 'puppeteer-core';
-import { profile, skills, experience, education, projects, contact } from '../src/content.ts';
+import { profile, experience, education, projects, contact } from '../src/content.ts';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(here, '..');
@@ -41,10 +41,14 @@ async function browserPath() {
 }
 
 function renderCv(css, interFontFaces, pagedJs) {
-  const skillGroups = skills
-    .filter(({ group }) => !['UI & Design', 'Data & API', 'Languages'].includes(group))
-    .map(({ group, items }) => `<div class="col-6 skill-group"><h3>${escapeHtml(group)}</h3><p>${items.map(escapeHtml).join(' / ')}</p></div>`)
-    .join('');
+  const skillRows = [
+    ['Frontend', ['React', 'Next.js', 'Angular', 'TypeScript', 'JavaScript (ES6+)', 'HTML5', 'CSS3', 'Sass', 'TanStack Query', 'Zustand', 'React Hook Form', 'Zod']],
+    ['Backend', ['Node.js', 'NestJS', 'Express', 'REST APIs', 'WebSockets', 'Swagger / OpenAPI']],
+    ['Data', ['PostgreSQL', 'MongoDB', 'Redis', 'Prisma']],
+    ['Design & 3D', ['UI/UX', 'Figma', 'Adobe Creative Suite', 'Photoshop', 'Illustrator', 'Premiere', 'Three.js', 'WebGL', 'Blender']],
+    ['Tools', ['Git', 'Docker', 'Jira', 'GitHub Actions', 'Grafana', 'WordPress', 'Claude', 'Codex', 'Cursor']],
+    ['Methods', ['Agile / Scrum', 'Code review', 'Responsive design', 'Automated testing']],
+  ].map(([label, items]) => `<p class="skill-row"><strong>${escapeHtml(label)}:</strong> ${items.map(escapeHtml).join(', ')}</p>`).join('');
 
   const roles = experience.map((role) => `
     <article class="entry">
@@ -52,13 +56,21 @@ function renderCv(css, interFontFaces, pagedJs) {
       <ul>${role.points.map((point) => `<li>${escapeHtml(point)}</li>`).join('')}</ul>
     </article>`).join('');
 
-  const projectCards = projects.map((project) => `
-    <div class="col-6"><article class="project-card">
-      <h3>${escapeHtml(project.name)}</h3>
+  const projectTypes = {
+    ePharmacy: 'Full-stack pharmacy e-commerce',
+    TravelTrucks: 'Camper rental platform',
+    'Quantum JS': 'Furniture e-commerce SPA',
+    FlowBloom: 'Yoga studio landing page',
+    NoteHub: 'Full-stack notes app',
+    ChillScape: 'Travel discovery app',
+  };
+  const projectEntries = projects.map((project) => `
+    <article class="project-entry">
+      <h3>${escapeHtml(project.name)} <span class="project-type">| ${escapeHtml(projectTypes[project.name] || 'Web application')}</span></h3>
       <p>${escapeHtml(project.summary)}</p>
-      <p class="stack">${project.stack.slice(0, 7).map(escapeHtml).join(' / ')}</p>
-      <p class="project-links">${project.live ? `<a href="${safeHref(project.live)}">Live</a>` : ''}<a href="${safeHref(project.repo)}">Code</a></p>
-    </article></div>`).join('');
+      <p class="project-highlights">${project.highlights.slice(0, 5).map(escapeHtml).join(' · ')}</p>
+      <p class="project-meta"><span>${project.stack.slice(0, 7).map(escapeHtml).join(', ')}</span><span class="project-links">${project.live ? `<a href="${safeHref(project.live)}">Live</a> · ` : ''}<a href="${safeHref(project.repo)}">Code</a></span></p>
+    </article>`).join('');
 
   const study = education.map((item) => `
     <article class="entry education-entry">
@@ -70,15 +82,15 @@ function renderCv(css, interFontFaces, pagedJs) {
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${escapeHtml(profile.name)} - CV</title>
 <style>${interFontFaces}</style><style>${css}</style></head><body>
-<main class="container cv-document">
-  <header class="cv-header row align-items-end">
-    <div class="col"><p class="eyebrow">CURRICULUM VITAE</p><h1>${escapeHtml(profile.name)}</h1><p class="headline">${escapeHtml(profile.role)}</p></div>
-    <address class="contact col-auto"><a href="mailto:${escapeHtml(contact.email)}">${escapeHtml(contact.email)}</a><br><a href="https://www.linkedin.com/in/tetiana-kovpak/">LinkedIn</a><span> / </span><a href="https://github.com/tetiana01kovpak">GitHub</a><br><a href="https://tetiana01kovpak.github.io/retro-portfolio/">Portfolio</a></address>
+<main class="cv-document">
+  <header class="cv-header">
+    <h1>${escapeHtml(profile.name)}</h1><p class="headline">${escapeHtml(profile.role)}</p>
+    <address class="contact"><a href="mailto:${escapeHtml(contact.email)}">${escapeHtml(contact.email)}</a><span> | </span><a href="https://www.linkedin.com/in/tetiana-kovpak/">LinkedIn</a><span> | </span><a href="https://github.com/tetiana01kovpak">GitHub</a><span> | </span><a href="https://tetiana01kovpak.github.io/retro-portfolio/">Portfolio</a></address>
   </header>
-  <section class="cv-section"><h2>Profile</h2><div class="bio">${profile.bio.map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`).join('')}</div></section>
+  <section class="cv-section"><h2>Summary</h2><div class="bio">${profile.bio.map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`).join('')}</div></section>
   <section class="cv-section"><h2>Experience</h2>${roles}</section>
-  <section class="cv-section" id="projects"><h2>Selected Projects</h2><div class="row project-grid">${projectCards}</div></section>
-  <section class="cv-section"><h2>Technical Skills</h2><div class="row skills-grid">${skillGroups}</div></section>
+  <section class="cv-section"><h2>Technical Skills</h2><div class="skills-list">${skillRows}</div></section>
+  <section class="cv-section" id="projects"><h2>Selected Projects</h2>${projectEntries}</section>
   <section class="cv-section education"><h2>Education &amp; Languages</h2>${study}<p class="languages"><strong>Languages</strong> Ukrainian / English / German / Italian</p></section>
   <footer>Portfolio <span>·</span> <a href="https://tetiana01kovpak.github.io/retro-portfolio/">tetiana01kovpak.github.io/retro-portfolio</a></footer>
 </main>
@@ -89,12 +101,10 @@ function renderCv(css, interFontFaces, pagedJs) {
 
 export async function buildCvPdf() {
   const chrome = await browserPath();
-  const bootstrapPath = path.join(root, 'node_modules', 'bootstrap', 'dist', 'css', 'bootstrap.min.css');
   const pagedPath = path.join(root, 'node_modules', 'pagedjs', 'dist', 'paged.polyfill.min.js');
   const customCssPath = path.join(here, 'cv.css');
   const fontDir = path.join(root, 'node_modules', '@fontsource', 'inter', 'files');
-  const [bootstrap, customCss, pagedJs, regularFont, mediumFont, semiboldFont, boldFont] = await Promise.all([
-    readFile(bootstrapPath, 'utf8'),
+  const [customCss, pagedJs, regularFont, mediumFont, semiboldFont, boldFont] = await Promise.all([
     readFile(customCssPath, 'utf8'),
     readFile(pagedPath, 'utf8'),
     readFile(path.join(fontDir, 'inter-latin-400-normal.woff2')),
@@ -106,7 +116,7 @@ export async function buildCvPdf() {
     const font = [regularFont, mediumFont, semiboldFont, boldFont][index].toString('base64');
     return `@font-face{font-family:Inter;src:url(data:font/woff2;base64,${font}) format('woff2');font-style:normal;font-weight:${weight};font-display:block}`;
   }).join('\n');
-  const html = renderCv(`${bootstrap}\n${customCss}`, fontFaces, pagedJs);
+  const html = renderCv(customCss, fontFaces, pagedJs);
   const tempHtml = path.join(os.tmpdir(), `tetiana-cv-${process.pid}.html`);
   await mkdir(dist, { recursive: true });
   await writeFile(tempHtml, html, 'utf8');
