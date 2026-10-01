@@ -69,6 +69,7 @@ function renderCv(css, fontFaces) {
   const orderedProjects = projectOrder.map((name) => projects.find((project) => project.name === name)).filter(Boolean);
   const projectEntries = orderedProjects.map((project) => `
     <article class="project-entry">
+      <span class="project-topbar" aria-hidden="true"></span>
       <header class="project-heading"><h3>${escapeHtml(project.name)}</h3><p class="project-type">${escapeHtml(projectTypes[project.name] || 'Web application')}</p></header>
       <p class="project-summary">${escapeHtml(project.summary)}</p>
       <p class="project-highlights"><strong>Highlights</strong> ${project.highlights.slice(0, 5).map(escapeHtml).join(' · ')}</p>
@@ -117,7 +118,7 @@ export async function buildCvPdf() {
     @font-face{font-family:'Latin Modern Roman';src:url(data:font/woff;base64,${regularFont.toString('base64')}) format('woff');font-style:normal;font-weight:400}
     @font-face{font-family:'Latin Modern Roman';src:url(data:font/woff;base64,${boldFont.toString('base64')}) format('woff');font-style:normal;font-weight:700}
   `;
-  const html = renderCv(customCss, fontFaces);
+  const html = renderCv(customCss.replace(/^\uFEFF/, ''), fontFaces);
   const htmlFile = path.join(dist, 'cv.html');
   await mkdir(dist, { recursive: true });
   await writeFile(htmlFile, html, 'utf8');
