@@ -814,7 +814,8 @@ kbd {
   padding: 0;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(17em, 100%), 1fr));
-  gap: 1em;
+  column-gap: 1em;
+  row-gap: 1.5em;
 }
 
 .apps {
@@ -981,7 +982,7 @@ kbd {
 .project {
   position: relative;
   border: 2px solid var(--phosphor-dim);
-  border-top: 3px solid var(--phosphor);
+  border-top: 5px solid var(--phosphor);
   padding: 0.5em 0.8em 0.3em;
   box-shadow: inset 0 0 18px rgba(77, 255, 136, 0.08);
   transition: border-color 0.15s, box-shadow 0.15s;
