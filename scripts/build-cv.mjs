@@ -40,9 +40,9 @@ async function browserPath() {
   throw new Error('Chrome or Edge is required to print the CV. Set CHROME_BIN to its executable path.');
 }
 
-function renderCv(bootstrap, customCss, portrait) {
+function renderCv(bootstrap, customCss) {
   const skillGroups = skills
-    .filter(({ group }) => !['UI & Design', 'Data & API'].includes(group))
+    .filter(({ group }) => !['UI & Design', 'Data & API', 'Languages'].includes(group))
     .map(({ group, items }) => `<div class="skill-group"><h3>${escapeHtml(group)}</h3><p>${items.map(escapeHtml).join(' · ')}</p></div>`)
     .join('');
 
@@ -72,7 +72,6 @@ function renderCv(bootstrap, customCss, portrait) {
 <style>${bootstrap}</style><style>${customCss}</style></head><body>
 <main class="container-fluid cv-sheet">
   <header class="hero row align-items-center">
-    <div class="col-auto"><img class="portrait" src="${portrait}" alt="${escapeHtml(profile.name)}"></div>
     <div class="col"><p class="eyebrow">FULLSTACK DEVELOPER · CV</p><h1>${escapeHtml(profile.name)}</h1><p class="headline">${escapeHtml(profile.role)}</p></div>
     <div class="col-12 col-md-auto hero-contact"><a href="mailto:${escapeHtml(contact.email)}">${escapeHtml(contact.email)}</a><br><a href="https://www.linkedin.com/in/tetiana-kovpak/">LinkedIn</a><span> · </span><a href="https://github.com/tetiana01kovpak">GitHub</a><br><a href="https://tetiana01kovpak.github.io/retro-portfolio/">Portfolio</a></div>
   </header>
@@ -89,14 +88,11 @@ export async function buildCvPdf() {
   const chrome = await browserPath();
   const bootstrapPath = path.join(root, 'node_modules', 'bootstrap', 'dist', 'css', 'bootstrap.min.css');
   const customCssPath = path.join(here, 'cv.css');
-  const portraitPath = path.join(root, 'src', 'assets', 'tetiana.png');
-  const [bootstrap, customCss, portraitBytes] = await Promise.all([
+  const [bootstrap, customCss] = await Promise.all([
     readFile(bootstrapPath, 'utf8'),
     readFile(customCssPath, 'utf8'),
-    readFile(portraitPath),
   ]);
-  const portrait = `data:image/png;base64,${portraitBytes.toString('base64')}`;
-  const html = renderCv(bootstrap, customCss, portrait);
+  const html = renderCv(bootstrap, customCss);
   const tempHtml = path.join(os.tmpdir(), `tetiana-cv-${process.pid}.html`);
   await mkdir(dist, { recursive: true });
   await writeFile(tempHtml, html, 'utf8');
