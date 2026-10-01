@@ -1,5 +1,5 @@
 ﻿:root { color-scheme: light; --ink: #171717; --muted: #515151; --rule: #b7b7b7; --soft: #f7f7f7; }
-@page { size: A4; margin: 17mm 22mm; }
+@page { size: A4; margin: 18mm 23mm; }
 * { box-sizing: border-box; }
 html, body { margin: 0; font-family: 'Latin Modern Roman', 'Times New Roman', serif; color: var(--ink); font-size: 1rem; line-height: 1.38; }
 body { background: #f1f1f1; }
