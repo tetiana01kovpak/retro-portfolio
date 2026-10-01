@@ -70,7 +70,7 @@ function renderCv(css, fontFaces) {
       <header class="project-heading"><h3>${escapeHtml(project.name)}</h3><p class="project-type">${escapeHtml(projectTypes[project.name] || 'Web application')}</p></header>
       <p class="project-summary">${escapeHtml(project.summary)}</p>
       <p class="project-highlights"><strong>Highlights</strong> ${project.highlights.slice(0, 5).map(escapeHtml).join(' · ')}</p>
-      <footer class="project-meta"><span class="project-stack"><strong>Stack</strong> ${project.stack.slice(0, 7).map(escapeHtml).join(', ')}</span><span class="project-links">${project.live ? `<a href="${safeHref(project.live)}">Live demo</a>` : ''}<a href="${safeHref(project.repo)}">Source</a></span></footer>
+      <footer class="project-meta"><span class="project-stack"><strong>Stack</strong> ${project.stack.slice(0, 7).map(escapeHtml).join(', ')}</span></footer>
     </article>`).join('');
 
   const study = education.map((item) => `
@@ -91,7 +91,7 @@ function renderCv(css, fontFaces) {
   <section class="cv-section"><h2>Summary</h2><div class="bio">${profile.bio.map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`).join('')}</div></section>
   <section class="cv-section"><h2>Experience</h2>${roles}</section>
   <section class="cv-section education"><h2>Education</h2>${study}</section>
-  <section class="cv-section languages-section"><h2>Languages</h2><p class="languages">Ukrainian · English · German · Italian</p></section>
+  <section class="cv-section languages-section"><h2>Languages</h2><p class="languages">English — Advanced · Ukrainian — Native · German — Intermediate · Italian — Intermediate</p></section>
   <div class="continuation">
     <header class="continuation-header"><strong>${escapeHtml(profile.name)}</strong><span>${escapeHtml(profile.role)}</span></header>
     <section class="cv-section projects-section"><h2>Projects</h2><div class="project-grid">${projectEntries}</div></section>

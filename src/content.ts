@@ -61,7 +61,7 @@ export const skills: { group: string; items: string[] }[] = [
   { group: 'Data & API', items: ['REST API', 'Axios', 'Vite'] },
   { group: 'AI & Tools', items: ['Claude', 'Codex', 'Cursor', 'Git', 'Docker', 'Jira'] },
   { group: 'Tools & DevOps', items: ['GitHub Actions (CI/CD)', 'Grafana', 'WordPress'] },
-  { group: 'Languages', items: ['English', 'Ukrainian', 'German', 'Italian'] },
+  { group: 'Languages', items: ['English — Advanced', 'Ukrainian — Native', 'German — Intermediate', 'Italian — Intermediate'] },
 ];
 
 export const projects: Project[] = [
