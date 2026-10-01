@@ -158,7 +158,7 @@ export const projects: Project[] = [
 export const experience: Role[] = [
   {
     title: 'Junior Fullstack Developer',
-    where: 'KvarnerKodek',
+    where: 'KvarnerKodek, Croatia',
     dates: '2026 – Present',
     points: [
       'Developing software for autonomous boating systems with React, Mantine, TypeScript and NestJS.',
@@ -167,7 +167,7 @@ export const experience: Role[] = [
   },
   {
     title: 'Junior Fullstack Developer',
-    where: 'Independent & team projects',
+    where: 'Independent & team projects, Ukraine',
     dates: '2025 – 2026',
     points: [
       'Built full-stack web projects (ePharmacy, TravelTrucks, Quantum JS, NoteHub) with React, Next.js, Node.js and REST APIs.',
@@ -176,7 +176,7 @@ export const experience: Role[] = [
   },
   {
     title: 'Freelance 3D & Web Developer',
-    where: 'Self-employed, client work',
+    where: 'Self-employed, client work, Ukraine',
     dates: '2022 – 2025',
     points: [
       'Created commercial 3D assets and scenes in Blender and brought them into interactive Three.js web scenes.',
