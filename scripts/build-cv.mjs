@@ -40,7 +40,7 @@ async function browserPath() {
   throw new Error('Chrome or Edge is required to print the CV. Set CHROME_BIN to its executable path.');
 }
 
-function renderCv(bootstrap, customCss) {
+function renderCv(css, interFontFaces) {
   const skillGroups = skills
     .filter(({ group }) => !['UI & Design', 'Data & API', 'Languages'].includes(group))
     .map(({ group, items }) => `<div class="skill-group"><h3>${escapeHtml(group)}</h3><p>${items.map(escapeHtml).join(' · ')}</p></div>`)
@@ -53,12 +53,12 @@ function renderCv(bootstrap, customCss) {
     </article>`).join('');
 
   const projectCards = projects.map((project) => `
-    <div class="col"><article class="project-card">
+    <article class="project-card">
       <h3>${escapeHtml(project.name)}</h3>
       <p>${escapeHtml(project.summary)}</p>
       <p class="stack">${project.stack.slice(0, 7).map(escapeHtml).join(' · ')}</p>
       <div class="project-links"><a href="${safeHref(project.live || project.repo)}">Project</a><a href="${safeHref(project.repo)}">Source</a></div>
-    </article></div>`).join('');
+    </article>`).join('');
 
   const study = education.map((item) => `
     <article class="entry education-entry">
@@ -69,30 +69,39 @@ function renderCv(bootstrap, customCss) {
   return `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${escapeHtml(profile.name)} — CV</title>
-<style>${bootstrap}</style><style>${customCss}</style></head><body>
-<main class="container-fluid cv-sheet">
-  <header class="hero row align-items-center">
-    <div class="col"><p class="eyebrow">FULLSTACK DEVELOPER · CV</p><h1>${escapeHtml(profile.name)}</h1><p class="headline">${escapeHtml(profile.role)}</p></div>
-    <div class="col-12 col-md-auto hero-contact"><a href="mailto:${escapeHtml(contact.email)}">${escapeHtml(contact.email)}</a><br><a href="https://www.linkedin.com/in/tetiana-kovpak/">LinkedIn</a><span> · </span><a href="https://github.com/tetiana01kovpak">GitHub</a><br><a href="https://tetiana01kovpak.github.io/retro-portfolio/">Portfolio</a></div>
+<style>${interFontFaces}</style><style>${css}</style></head><body data-theme="light">
+<main class="container cv-document">
+  <header class="cv-header">
+    <div class="identity"><p class="eyebrow">CURRICULUM VITAE</p><h1>${escapeHtml(profile.name)}</h1><p class="headline">${escapeHtml(profile.role)}</p></div>
+    <address class="contact"><a href="mailto:${escapeHtml(contact.email)}">${escapeHtml(contact.email)}</a><br><a href="https://www.linkedin.com/in/tetiana-kovpak/">LinkedIn</a><span> · </span><a href="https://github.com/tetiana01kovpak">GitHub</a><br><a href="https://tetiana01kovpak.github.io/retro-portfolio/">Portfolio</a></address>
   </header>
   <section class="cv-section"><h2>Profile</h2><div class="bio">${profile.bio.map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`).join('')}</div></section>
   <section class="cv-section"><h2>Experience</h2>${roles}</section>
-  <section class="cv-section" id="projects"><h2>Selected Projects</h2><div class="row row-cols-1 row-cols-md-2 g-2">${projectCards}</div></section>
+  <section class="cv-section" id="projects"><h2>Selected Projects</h2><div class="project-grid">${projectCards}</div></section>
   <section class="cv-section"><h2>Technical Skills</h2><div class="skills-grid">${skillGroups}</div></section>
   <section class="cv-section education"><h2>Education &amp; Languages</h2>${study}<p class="languages"><strong>Languages:</strong> Ukrainian · English · German · Italian</p></section>
-  <footer>Portfolio projects, experience, and profile: <a href="https://tetiana01kovpak.github.io/retro-portfolio/">tetiana01kovpak.github.io/retro-portfolio</a></footer>
+  <footer>Portfolio <span>·</span> <a href="https://tetiana01kovpak.github.io/retro-portfolio/">tetiana01kovpak.github.io/retro-portfolio</a></footer>
 </main></body></html>`;
 }
 
 export async function buildCvPdf() {
   const chrome = await browserPath();
-  const bootstrapPath = path.join(root, 'node_modules', 'bootstrap', 'dist', 'css', 'bootstrap.min.css');
+  const picoPath = path.join(root, 'node_modules', '@picocss', 'pico', 'css', 'pico.min.css');
   const customCssPath = path.join(here, 'cv.css');
-  const [bootstrap, customCss] = await Promise.all([
-    readFile(bootstrapPath, 'utf8'),
+  const fontDir = path.join(root, 'node_modules', '@fontsource', 'inter', 'files');
+  const [pico, customCss, regularFont, mediumFont, semiboldFont, boldFont] = await Promise.all([
+    readFile(picoPath, 'utf8'),
     readFile(customCssPath, 'utf8'),
+    readFile(path.join(fontDir, 'inter-latin-400-normal.woff2')),
+    readFile(path.join(fontDir, 'inter-latin-500-normal.woff2')),
+    readFile(path.join(fontDir, 'inter-latin-600-normal.woff2')),
+    readFile(path.join(fontDir, 'inter-latin-700-normal.woff2')),
   ]);
-  const html = renderCv(bootstrap, customCss);
+  const fontFaces = [400, 500, 600, 700].map((weight, index) => {
+    const font = [regularFont, mediumFont, semiboldFont, boldFont][index].toString('base64');
+    return `@font-face{font-family:Inter;src:url(data:font/woff2;base64,${font}) format('woff2');font-style:normal;font-weight:${weight};font-display:block}`;
+  }).join('\n');
+  const html = renderCv(`${pico}\n${customCss}`, fontFaces);
   const tempHtml = path.join(os.tmpdir(), `tetiana-cv-${process.pid}.html`);
   await mkdir(dist, { recursive: true });
   await writeFile(tempHtml, html, 'utf8');
