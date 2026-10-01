@@ -216,7 +216,7 @@ export const contact = {
   email: 'tetianakovpak@gmail.com',
   links: [
     { label: 'Email', href: 'mailto:tetianakovpak@gmail.com' },
-    { label: 'LinkedIn', href: 'https://www.linkedin.com/in/tetiana-kovpak/' },
+    { label: 'LinkedIn', href: 'https://www.linkedin.com/in/tetiana-kovpak' },
     { label: 'GitHub', href: 'https://github.com/tetiana01kovpak' },
   ] satisfies Link[],
 };

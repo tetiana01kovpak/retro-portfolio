@@ -89,7 +89,7 @@ function renderCv(css, fontFaces) {
 <main id="cv" class="cv-document">
   <header class="cv-header">
     <div class="identity"><h1>${escapeHtml(profile.name)}</h1><p class="headline">${escapeHtml(profile.role)}</p></div>
-    <address class="contact"><a href="mailto:${escapeHtml(contact.email)}">${escapeHtml(contact.email)}</a><span> · </span><a href="https://www.linkedin.com/in/tetiana-kovpak/">LinkedIn</a><span> · </span><a href="https://github.com/tetiana01kovpak">GitHub</a><span> · </span><a href="https://tetianakovpak.dev/">tetianakovpak.dev</a></address>
+    <address class="contact"><a href="mailto:${escapeHtml(contact.email)}">${escapeHtml(contact.email)}</a><span> · </span><a href="https://www.linkedin.com/in/tetiana-kovpak">LinkedIn</a><span> · </span><a href="https://github.com/tetiana01kovpak">GitHub</a><span> · </span><a href="https://tetianakovpak.dev/">tetianakovpak.dev</a></address>
   </header>
   <section class="cv-section"><h2>Summary</h2><div class="bio">${summary.map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`).join('')}</div></section>
   <section class="cv-section"><h2>Experience</h2>${roles}</section>
@@ -100,7 +100,7 @@ function renderCv(css, fontFaces) {
     <section class="cv-section projects-section"><h2>Projects</h2><div class="project-grid">${projectEntries}</div></section>
     <section class="cv-section skills-section"><h2>Technical Skills</h2><div class="skills-grid">${skillGroups}</div></section>
   </div>
-  <footer>Portfolio <span>·</span> <a href="https://tetiana01kovpak.github.io/retro-portfolio/">tetiana01kovpak.github.io/retro-portfolio</a></footer>
+  <footer>Portfolio <span>·</span> <a href="https://tetianakovpak.dev/">tetianakovpak.dev</a></footer>
 </main>
 </body></html>`;
 }
